@@ -8,19 +8,7 @@
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
 
-                <li><a  href="#myModal" data-bs-toggle="modal" class="waves-effect"><i class="ri-account-circle-line align-middle me-1"></i><span> <%=translation.My_account%></span></a></li>
-                <li><a  href="/pages-lock-screen" class="waves-effect"><i class="ri-lock-unlock-line align-middle me-1"></i><span><%=translation.Lock_screen%></span></a></li>
-                <li><a  href="/logout" class="waves-effect"><i class="ri-shut-down-line"></i></i><span><%=translation.Logout%></span></a></li>
-                <li>
-                    <a  href="/delete-user" class="text-danger waves-effect">
-                        <i class="ri-delete-bin-6-line text-danger"></i>
-                        <span><%=translation.Delete_account%></span>
-                    </a>
-                </li>
-                
-                <hr class="border">  
-
-                <li><a  href="#chats" class="waves-effect" data-bs-toggle="modal" onclick="get_chats()"><i class="bi bi-person"></i></i><span><%=translation.Chats%></span></a></li>
+                <li style="margin-top: 50%;"><a  href="#chats" class="waves-effect" data-bs-toggle="modal" onclick="get_chats()"><i class="bi bi-person"></i></i><span><%=translation.Chats%></span></a></li>
                 <li><a  href="javascript: void(0);" class="waves-effect"><i class="bi bi-people-fill"></i><span><%=translation.Groups%></span></a></li>
                 <li><a  href="javascript: void(0);" class="waves-effect"><i class="bi bi-megaphone"></i><span><%=translation.Channels%></span></a></li>
                 <li><a  href="#contacts" class="waves-effect" data-bs-toggle="modal" onclick="get_contacts()"><i class="ri-contacts-book-2-line"></i><%=translation.Contacts%></a></li>
@@ -95,6 +83,12 @@
                 </li>
                 <li><a href="javascript: void(0);" class="waves-effect"> <i class="bi bi-exclamation-circle"></i><span><%=translation.About%></span></a></li>
                  
+                <li>
+                    <a  href="/delete-user" class="text-danger waves-effect">
+                        <i class="ri-delete-bin-6-line text-danger"></i>
+                        <span><%=translation.Delete_account%></span>
+                    </a>
+                </li>
             </ul>
 
         </div>
