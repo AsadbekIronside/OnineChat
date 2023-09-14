@@ -1,0 +1,103 @@
+<!-- ========== Left Sidebar Start ========== -->
+<div class="vertical-menu">
+
+    <div data-simplebar class="h-100">
+
+        <!--- Sidemenu -->
+        <div id="sidebar-menu">
+            <!-- Left Menu Start -->
+            <ul class="metismenu list-unstyled" id="side-menu">
+
+                <li><a  href="#myModal" data-bs-toggle="modal" class="waves-effect"><i class="ri-account-circle-line align-middle me-1"></i><span> <%=translation.My_account%></span></a></li>
+                <li><a  href="/pages-lock-screen" class="waves-effect"><i class="ri-lock-unlock-line align-middle me-1"></i><span><%=translation.Lock_screen%></span></a></li>
+                <li><a  href="/logout" class="waves-effect"><i class="ri-shut-down-line"></i></i><span><%=translation.Logout%></span></a></li>
+                <li>
+                    <a  href="/delete-user" class="text-danger waves-effect">
+                        <i class="ri-delete-bin-6-line text-danger"></i>
+                        <span><%=translation.Delete_account%></span>
+                    </a>
+                </li>
+                
+                <hr class="border">  
+
+                <li><a  href="#chats" class="waves-effect" data-bs-toggle="modal" onclick="get_chats()"><i class="bi bi-person"></i></i><span><%=translation.Chats%></span></a></li>
+                <li><a  href="javascript: void(0);" class="waves-effect"><i class="bi bi-people-fill"></i><span><%=translation.Groups%></span></a></li>
+                <li><a  href="javascript: void(0);" class="waves-effect"><i class="bi bi-megaphone"></i><span><%=translation.Channels%></span></a></li>
+                <li><a  href="#contacts" class="waves-effect" data-bs-toggle="modal" onclick="get_contacts()"><i class="ri-contacts-book-2-line"></i><%=translation.Contacts%></a></li>
+                
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="bi bi-gear"></i>
+                        <span><%=translation.Settings%></span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="bi bi-globe"></i>
+                                <span><%=translation.Language%></span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li>  <a href="?clang=en" class="dropdown-item notify-item">
+                                    <img src="public/assets/images/flags/us.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> English </span>
+                                     </a>
+                                </li>
+                                <li>  <a href="?clang=de" class="dropdown-item notify-item">
+                                    <img src="public/assets/images/flags/germany.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> German </span>
+                                </a></li>
+                                <li> <a href="?clang=it" class="dropdown-item notify-item">
+                                    <img src="public/assets/images/flags/italy.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> Italian </span>
+                                </a>
+                                 </li>
+                                <li> <a href="?clang=fr" class="dropdown-item notify-item">
+                                    <img src="public/assets/images/flags/french.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> French </span>
+                                </a></li>
+                                <li> <a href="?clang=es" class="dropdown-item notify-item">
+                                    <img src="public/assets/images/flags/spain.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> Spanish </span>
+                                </a></li>
+                                <li> <!-- item-->
+                                    <a href="?clang=ru" class="dropdown-item notify-item">
+                                        <img src="public/assets/images/flags/russia.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> Russian </span>
+                                    </a></li>
+                            </ul>
+                        </li> 
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="bi bi-palette"></i>
+                                <span><%=translation.Themes%></span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li><div class="form-check form-switch m-3 ms-5">
+                                    <input class="form-check-input theme-choice" type="checkbox" id="light-mode-switch" checked>
+                                    <label class="form-check-label" for="light-mode-switch">Light Mode</label>
+                                </div></li>
+                                <li><div class="form-check form-switch m-3 ms-5">
+                                    <input class="form-check-input theme-choice" type="checkbox" id="dark-mode-switch" data-bsStyle="public/assets/css/bootstrap-dark.min.css" data-appStyle="public/assets/css/app-dark.min.css">
+                                    <label class="form-check-label" for="dark-mode-switch">Dark Mode</label>
+                                </div></li>
+                                <li><div class="form-check form-switch m-3 ms-5">
+                                    <input class="form-check-input theme-choice" type="checkbox" id="rtl-mode-switch" data-appStyle="public/assets/css/app-rtl.min.css">
+                                    <label class="form-check-label" for="rtl-mode-switch">RTL Mode</label>
+                                </div></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="bi bi-pencil"></i>
+                        <span><%=translation.Create%></span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="#"><i class="bi bi-person-plus"></i><%=translation.Add_contact%></a></li>
+                        <li><a href="#"><i class="bi bi-people"></i><%=translation.New_group%></a></li>
+                        <li><a href="#"><i class="bi bi-megaphone"></i><%=translation.New_channel%></a></li>
+                    </ul>
+                </li>
+                <li><a href="javascript: void(0);" class="waves-effect"> <i class="bi bi-exclamation-circle"></i><span><%=translation.About%></span></a></li>
+                 
+            </ul>
+
+        </div>
+        <!-- Sidebar -->
+    </div>
+</div>
