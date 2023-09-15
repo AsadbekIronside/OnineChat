@@ -52,23 +52,17 @@
                                                 
                                                 <form class="" method="post" action="/post-register">
 
-                                                    <div class="auth-form-group-custom mb-4">
+                                                    <!-- <div class="auth-form-group-custom mb-4">
                                                         <i class="ri-mail-line auti-custom-input-icon"></i>
                                                         <label for="useremail">Email</label>
                                                         <input type="email" class="form-control" id="useremail" placeholder="Enter email" name="email" required>
-                                                    </div>
-
-                                                    
-                                                    <div class="auth-form-group-custom mb-4">
-                                                        <i class="ri-lock-2-line auti-custom-input-icon"></i>
-                                                        <label for="userpassword">Password</label>
-                                                        <input type="password" class="form-control" id="userpassword" placeholder="Enter password" name="password" minlength="6" maxlength="20" required>
-                                                    </div>
+                                                    </div> -->
 
                                                     <div class="auth-form-group-custom mb-4">
                                                         <i class="ri-user-2-line auti-custom-input-icon"></i>
                                                         <label for="username">Username</label>
-                                                        <input type="text" class="form-control" id="username" placeholder="Enter username" name="username" required>
+                                                        <input type="text" class="form-control" id="username" placeholder="Enter username" name="username"
+                                                        pattern=".*[a-zA-Z]+.*" title="must contain at least 1 letter" required>
                                                     </div>
                             
                                                     <div class="auth-form-group-custom mb-4">
@@ -77,12 +71,16 @@
                                                         <input type="text" class="form-control" id="userage" placeholder="Enter name"  name="account_name" required>
                                                     </div>
 
-                                                    <div class="text-center">
-                                                        <button class="btn btn-primary w-md waves-effect waves-light" type="submit">Register</button>
+                                                           
+                                                    <div class="auth-form-group-custom mb-4">
+                                                        <i class="ri-lock-2-line auti-custom-input-icon"></i>
+                                                        <label for="userpassword">Password</label>
+                                                        <input type="password" class="form-control" id="userpassword" placeholder="Enter password" name="password" 
+                                                        minlength="6" maxlength="20" title="must be at least 6 and at most 20 characters length" required>
                                                     </div>
 
-                                                    <div class="mt-4 text-center">
-                                                        <p class="mb-0">By registering you agree to the Nazox <a href="#" class="text-primary">Terms of Use</a></p>
+                                                    <div class="text-center">
+                                                        <button class="btn btn-primary w-md waves-effect waves-light" type="submit">Register</button>
                                                     </div>
                                                 </form>
                                             </div>

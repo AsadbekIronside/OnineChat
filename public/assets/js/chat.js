@@ -13,12 +13,20 @@ async function addMessage(message, to_user_info) {
                         <div class="conversation-list">
                             <div class="ctext-wrap">
                                 <div class="ctext-wrap-content">
-                                    <p class="mb-0">
-                                    ${message.message}
-                                    </p>
+                                    <p class="mb-0">${message.message}</p>
+
+                                    <a href="#" style="position:absolute; rigtht:0; bottom:26px; margin-left:15px;" class="dropdown-toggle" data-toggle="dropdown">
+                                       <i class="bi bi-three-dots-vertical fa-lg"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                      <li><a href="#">Foo</a></li>
+                                      <li><a href="#">Bar</a></li>
+                                    </ul>
+            
                                 </div>
                                 <p class="chat-time mb-0"><i class="mdi mdi-clock-outline me-1"></i> ${hours}:${minutes}</p>
                             </div>
+                            
                         </div>
                 </li>`;
     } else {
@@ -63,22 +71,22 @@ function sendMesssage() {
 }
 var count = 0;
 async function getMessages(to_user_id) {
-    console.log('count='+count);
-    const response = await fetch('/get-messages?count='+count+'&toUserId='+to_user_id)
+    console.log('count=' + count);
+    const response = await fetch('/get-messages?count=' + count + '&toUserId=' + to_user_id)
         .then(response => response.json());
 
     const messageList = response.array;
     console.log(messageList);
     const to_user_info = response.to_user_info;
 
-    if(messageList.length>0){
-        count = messageList[messageList.length-1].message_id;
-        console.log('zzzzzzzzzzzzzzzzzzzzz='+count);
+    if (messageList.length > 0) {
+        count = messageList[messageList.length - 1].message_id;
+        console.log('zzzzzzzzzzzzzzzzzzzzz=' + count);
         messageList.forEach(async function (element) {
             await addMessage(element, to_user_info);
         });
     }
-} 
+}
 
 document.getElementById('send_button').addEventListener('click', () => {
     sendMesssage();
@@ -112,9 +120,9 @@ const scrollToBottom = () => {
 
 var result;
 
-const add_contacts = async(user)=>{
-    const contactTemp = 
- `<a href="javascript: void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_new_chat(${user.user_id})">
+const add_contacts = async (user) => {
+    const contactTemp =
+        `<a href="javascript: void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_new_chat(${user.user_id})">
     <div class="card m-0">
        <div class="row no-gutters align-items-center">
          <div class="col-md-4">
@@ -128,39 +136,39 @@ const add_contacts = async(user)=>{
        </div>
      </div>
     </a> `;
-  
-    result+=contactTemp;
+
+    result += contactTemp;
 }
-const get_contacts = async()=>{
-    result='';
+const get_contacts = async () => {
+    result = '';
     $('#modal_body_group').html('');
- 
+
     await fetch('/get-contacts')
-    .then(response => response.json())
-    .then(data => {
-        data.contacts.forEach(user=>add_contacts(user));
-        $('#modal_body_group').append(result);
-    });
+        .then(response => response.json())
+        .then(data => {
+            data.contacts.forEach(user => add_contacts(user));
+            $('#modal_body_group').append(result);
+        });
 }
 
-var myInterval = setInterval(()=>{}, 10000);
+var myInterval = setInterval(() => { }, 10000);
 
-const start_new_chat = async(userId)=>{
+const start_new_chat = async (userId) => {
     count = 0;
     clearInterval(myInterval);
-    const response = await fetch('/start-chat?userId='+userId)
-    .then(response=>response.json());
+    const response = await fetch('/start-chat?userId=' + userId)
+        .then(response => response.json());
     const toUser = $('#to_user');
     toUser.html('');
 
     const result =
-    `<h5 class="font-size-15 mb-1 text-truncate">${response.account_name}<p id="userId" hidden>${response.user_id}</p></h5>
+        `<h5 class="font-size-15 mb-1 text-truncate">${response.account_name}<p id="userId" hidden>${response.user_id}</p></h5>
     <p class="text-truncate mb-0"><i class="mdi mdi-circle text-success align-middle me-1"></i> Active now</p>`;
-    
+
     toUser.append(result);
     $('#messageList').html('');
-    
-    myInterval = setInterval(()=>{
+
+    myInterval = setInterval(() => {
         getMessages(userId);
         // console.log('log ishlavotti');
     }, 1000);
@@ -172,71 +180,87 @@ const start_new_chat = async(userId)=>{
 
 var resultChat;
 
-const add_chats = async(user)=>{
+const add_chats = async (user) => {
     var now = new Date();
     var time = new Date(user.create_time);
     var resultTime;
     console.log(user);
-    if(now.getDate()-time.getDate() > 0)
-        resultTime = now.getDate()-time.getDate() + '  days ago';
-    else if(now.getHours()-time.getHours()>0) 
-        resultTime = now.getHours()-time.getHours() + ' hours ago';
-    else 
-        resultTime = now.getMinutes()-time.getMinutes() + ' minutes ago';
+    if (now.getDate() - time.getDate() > 0)
+        resultTime = now.getDate() - time.getDate() + '  days ago';
+    else if (now.getHours() - time.getHours() > 0)
+        resultTime = now.getHours() - time.getHours() + ' hours ago';
+    else
+        resultTime = now.getMinutes() - time.getMinutes() + ' minutes ago';
 
-    const contactTemp = 
- `<a href="javascript: void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_chat(${user.user_id})">
-        <div class="d-flex">
-        <div class="user-img away align-self-center me-5 mx-1">
-            <img src="${user.profile_photo}" class="rounded-circle" style="height:80px;"  alt="avatar-3">
-            <span class="user-status"></span>
-        </div>
-        <div class="flex-1 overflow-hidden align-self-center">
-            <h5 class="text-truncate font-size-14 mb-1 fw-bolder">${user.account_name}</h5>
-            <p class="text-truncate mb-0">${user.message}</p>
-        </div>
-        <div class="font-size-11">${resultTime}</div>
-        </div>
-    </a> `;
-  
-    resultChat+=contactTemp;
+    const contactTemp =
+        ` <li>
+            <a href="#" class="list-group-item list-group-item-action fw-bolder" onclick="start_chat(${user.user_id})">
+                <div class="d-flex">
+                    <div class="user-img away  align-self-center me-4 ">
+                        <img src="${user.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:50px;width:50px;">
+                    </div>
+                    <div class="flex-1 overflow-hidden align-self-center">
+                        <h5 class="text-truncate font-size-14 mb-1">${user.account_name}</h5>
+                        <p class="text-truncate mb-0">${user.message}</p>
+                    </div>
+                    <div class="font-size-11">${resultTime}</div>
+                </div>
+            </a>
+         </li>`;
+
+    resultChat += contactTemp;
 }
 
-const get_chats = async()=>{
-    resultChat='';
-    $('#modal_body_group2').html('');
-
+const get_chats = async () => {
+    resultChat = '';
     await fetch('/get-chats')
-    .then(response => response.json())
-    .then(data => {
-        // console.log(data);
-        data.contacts.forEach(user=>add_chats(user));
-        $('#modal_body_group2').append(resultChat);
-    });
+        .then(response => response.json())
+        .then(data => {
+            data.contacts.forEach(user => add_chats(user));
+            $('#chatsGroup').append(resultChat);
+        });
 }
-var myInterval = setInterval(()=>{}, 10000);
 
-const start_chat = async(userId)=>{
+// (get_chats)();
+$(document).ready(function () {
+    get_chats();
+});
+
+
+var myInterval = setInterval(() => { }, 10000);
+
+const start_chat = async (userId) => {
+    console.log('This inside start_chat');
     count = 0;
     clearInterval(myInterval);
-    const response = await fetch('/start-chat?userId='+userId)
-    .then(response=>response.json());
+    const response = await fetch('/start-chat?userId=' + userId)
+        .then(response => response.json());
     const toUser = $('#to_user');
     toUser.html('');
 
     const result =
-    `<h5 class="font-size-15 mb-1 text-truncate">${response.account_name}<p id="userId" hidden>${response.user_id}</p></h5>
+        `<h5 class="font-size-15 mb-1 text-truncate">${response.account_name}<p id="userId" hidden>${response.user_id}</p></h5>
     <p class="text-truncate mb-0"><i class="mdi mdi-circle text-success align-middle me-1"></i> Active now</p>`;
-    
+
     toUser.append(result);
     $('#messageList').html('');
 
-    // var user_id = document.getElementById('userId').innerHTML;
-    // user_id = Number(user_id);
-    myInterval = setInterval(()=>{
+    const cardBody =
+        `<h5 class="card-title fw-bolder">Name:</h5>
+            <h6 class="card-text ">${response.account_name}</h6>
+            <h5 class="card-title fw-bolder">Username:</h5>
+            <p class="card-text ">@${response.username}</p>
+            <p class="card-text"><small class="text-primary">Active now</small></p>`;
+
+    $('#cardBody').append(cardBody);
+
+    myInterval = setInterval(() => {
         getMessages(userId);
         // console.log('log ishlavotti');
     }, 1000);
     document.querySelector('#modal_close_chat').click();
 };
 
+
+
+//alerts

@@ -6,8 +6,7 @@ const create_users = async ()=>{
     await knex.schema.createTable('tb_users', (table)=>{
         table.increments('user_id').primary();
         table.string('username').notNullable().unique();
-        table.string('email').notNullable();
-        table.string('password').notNullable();
+        table.string('password').notNullable().unique();
         table.string('account_name').notNullable();
         table.tinyint('user_status').defaultTo(1);
         table.string('profile_photo').defaultTo("public/assets/images/chat_photos/default_profile_photo.jpg");
@@ -26,10 +25,10 @@ const create_messages = async ()=>{
         table.integer('from_user_id').notNullable().unsigned();
         table.integer('to_user_id').notNullable();
         table.string('message',1000).notNullable();
+        table.string('message_status').defaultTo(1);
         table.string('create_time').notNullable();
         table.string('update_time').nullable();
         table.string('delete_time').nullable();
-        table.string('message_status').defaultTo(1);
 
         table.foreign('from_user_id', 'f_key_user_id').references('tb_users.user_id');
 

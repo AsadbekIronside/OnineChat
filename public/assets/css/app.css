@@ -106,10 +106,9 @@ File: Main Css File
     display: none; }
   .logo span.logo-sm {
     display: inline-block; } }
-
 .page-content {
-  padding: calc(70px + 24px) calc(24px / 2) 60px calc(24px / 2); }
-
+      padding: calc(70px + 24px) calc(24px / 2) 60px calc(24px / 2); }
+    
 .header-item {
   height: 70px;
   -webkit-box-shadow: none !important;

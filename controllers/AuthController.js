@@ -1,5 +1,5 @@
 ///////  crud user
-var { post_user, get_user, delete_user, check_email_exists, find_user_password, check_username_exists} = require('../model/auth_crud');
+var { post_user, get_user, delete_user, check_password_exists, find_user_password, check_username_exists} = require('../model/auth_crud');
 
 const pages_login = (req, res)=>{
 	res.locals = { title: 'Login 1' };
@@ -37,18 +37,13 @@ const post_login = async(req, res)=>{
     try {
         const user = await get_user(req.body);
         if (user[0]) {
-            if(user[0].user_status===1){
-                // Assign value in session
-                sess = req.session;
-                sess.user = user[0];
-                res.redirect('/');
-            }else {
-                req.flash('error', 'Incorrect email or password!');
-                res.redirect('/login');
-            }
+
+            sess = req.session;
+            sess.user = user[0];
+            res.redirect('/');
 
         } else {
-            req.flash('error', 'Incorrect email or password!');
+            req.flash('error', 'Incorrect username or password!');
             res.redirect('/login');
         }
     } catch (error) {
@@ -100,16 +95,21 @@ const deleteUser = async(req, res)=>{
 
 const post_register =  async(req, res)=>{
  
-    const existsUserEmail = await check_email_exists(req.body.email);
-    const existsUserUsername = await check_username_exists(req.body.username);
-    if(existsUserEmail[0]){
+    var username = String(req.body.username);
+    if(username.startsWith('@')){
+        username = username.substring(1);
+    }
+    const existsUserPass = await check_password_exists(req.body.password);
+    const existsUserUsername = await check_username_exists(username);
+    
+    if(existsUserPass[0]){
 
-        req.flash('error', 'Email has already been registered.');
+        req.flash('error', 'Password has already been used. Please create a new one!');
         res.redirect('/register');
 
     }else if(existsUserUsername[0]){
 
-        req.flash('error', 'Username have already been taken. Please find a new one');
+        req.flash('error', 'Username have already been taken. Please find a new one!');
         res.redirect('/register');
 
     } else {
