@@ -22,7 +22,7 @@ const post_messages = async (req, res) => {
 const get_messages = async (req, res) => {
 
     let count = parseInt(req.query.count);
-    console.log(count);
+    // console.log(count);
     let to_user_id = parseInt(req.query.toUserId);
 
     let get_user = await getUser(to_user_id);

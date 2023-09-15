@@ -31,21 +31,37 @@ File: Sweetalert Js File
         });
 
         //Warning Message
-        $('#sa-warning').click(function () {
+
+        $('#deleteAccount').click(function () {
             Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
+                title: "Do you want to delete your account?",
                 showCancelButton: true,
                 confirmButtonColor: "#1cbb8c",
                 cancelButtonColor: "#ff3d60",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes",
               }).then(function (result) {
                 if (result.value) {
-                  Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                    
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#1cbb8c",
+                        cancelButtonColor: "#ff3d60",
+                        confirmButtonText: "Yes, delete it!"
+                      }).then(async function (result) {
+                        if (result.value) {
+
+                            await fetch('/delete-user');
+
+                        }
+                    });
+
                 }
             });
         });
+  
 
         //Parameter
         $('#sa-params').click(function () {
@@ -91,7 +107,7 @@ File: Sweetalert Js File
                   ) {
                     Swal.fire({
                       title: 'Cancelled',
-                      text: 'Your imaginary file is safe :)',
+                      text: 'Your messaages are safe :)',
                       icon: 'error'
                     })
                   }

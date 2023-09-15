@@ -90,6 +90,8 @@ const page_unlock = async(req, res)=>{
 
 const deleteUser = async(req, res)=>{
     await delete_user(req.session.user.user_id);
+    req.session.user = null;
+    
     res.redirect('/login');
 }
 
