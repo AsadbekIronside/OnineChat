@@ -1,5 +1,5 @@
 const { postMessages, getMessages, getUserContacts, getUserChats, getUser,
-        getLastMessage} = require('../model/crud');
+        getLastMessage, clearChat} = require('../model/crud');
 
 const get_main_page = async(req, res)=>{
     res.locals = { title: 'chat' };
@@ -54,11 +54,24 @@ const start_chat = async(req, res)=>{
     res.json(user[0]);
 }
 
+const clear_chat = async(req, res)=>{
+
+    let to_user_id = parseInt(req.query.userId);
+    let from_user_id = parseInt(req.session.user.user_id);
+    let result = await clearChat(from_user_id, to_user_id);
+    if(result)
+        return res.json({ok:'ok', result:to_user_id});
+    else 
+        return res.json({ok:'err'});
+
+}
+
 module.exports = {
     get_main_page,
     post_messages,
     get_messages,
     get_contacts,
     get_chats,
-    start_chat
+    start_chat,
+    clear_chat
 }

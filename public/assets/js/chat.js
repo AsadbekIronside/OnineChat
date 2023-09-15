@@ -168,6 +168,9 @@ const start_new_chat = async (userId) => {
     toUser.append(result);
     $('#messageList').html('');
 
+    document.getElementById('search').removeAttribute('hidden');
+    document.getElementById('params').removeAttribute('hidden');
+
     myInterval = setInterval(() => {
         getMessages(userId);
         // console.log('log ishlavotti');
@@ -181,6 +184,7 @@ const start_new_chat = async (userId) => {
 var resultChat;
 
 const add_chats = async (user) => {
+
     var now = new Date();
     var time = new Date(user.create_time);
     var resultTime;
@@ -193,7 +197,7 @@ const add_chats = async (user) => {
         resultTime = now.getMinutes() - time.getMinutes() + ' minutes ago';
 
     const contactTemp =
-        ` <li>
+        ` <li id="${user.user_id}">
             <a href="#" class="list-group-item list-group-item-action fw-bolder" onclick="start_chat(${user.user_id})">
                 <div class="d-flex">
                     <div class="user-img away  align-self-center me-4 ">
@@ -230,19 +234,22 @@ $(document).ready(function () {
 var myInterval = setInterval(() => { }, 10000);
 
 const start_chat = async (userId) => {
-    console.log('This inside start_chat');
+
+    // console.log('This inside start_chat');
     count = 0;
     clearInterval(myInterval);
+
     const response = await fetch('/start-chat?userId=' + userId)
         .then(response => response.json());
+        
     const toUser = $('#to_user');
     toUser.html('');
 
     const result =
         `<h5 class="font-size-15 mb-1 text-truncate">${response.account_name}<p id="userId" hidden>${response.user_id}</p></h5>
     <p class="text-truncate mb-0"><i class="mdi mdi-circle text-success align-middle me-1"></i> Active now</p>`;
-
     toUser.append(result);
+
     $('#messageList').html('');
 
     const cardBody =
@@ -253,6 +260,9 @@ const start_chat = async (userId) => {
             <p class="card-text"><small class="text-primary">Active now</small></p>`;
 
     $('#cardBody').append(cardBody);
+    
+    document.getElementById('search').removeAttribute('hidden');
+    document.getElementById('params').removeAttribute('hidden');
 
     myInterval = setInterval(() => {
         getMessages(userId);
@@ -264,3 +274,13 @@ const start_chat = async (userId) => {
 
 
 //alerts
+
+async function clearChat(){
+
+    const to_user_id = document.getElementById('userId').innerHTML;
+    
+    const response = await fetch('/clear-chat?userId='+to_user_id)
+    .then(response => response.json());
+
+    return String(response.ok).startsWith('ok') ? Number(response.result) : -1;
+}

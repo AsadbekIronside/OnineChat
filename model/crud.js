@@ -23,7 +23,7 @@ const getUserContacts = async(current_user_id)=>{
     return await knex(users).select(['user_id', 'username', 'account_name', 'profile_photo'])
     .where('user_status', '=', '1')
     .andWhere('user_id', '<>', current_user_id)
-    .where(knex.raw(`user_id NOT IN (SELECT from_user_id FROM tb_messages WHERE to_user_id=${current_user_id})`));
+    .where(knex.raw(`user_id NOT IN (SELECT from_user_id FROM tb_messages WHERE to_user_id=${current_user_id} AND message_status=1)`));
     
 }
 
@@ -54,12 +54,20 @@ const getUser = async(user_id)=>{
     .where('user_id', '=', user_id);
 }
 
+const clearChat = async(from_user_id, to_user_id)=>{
+    return await knex(messages).update({message_status:0, delete_time: new Date()})
+    .where(knex.raw(`((from_user_id=${from_user_id} AND to_user_id=${to_user_id}) OR (from_user_id=${to_user_id} AND to_user_id=${from_user_id}))`))
+    .andWhere('message_status', '=', '1');
+
+}
+
 module.exports = {
     postMessages,
     getMessages,
     getUserContacts,
     getUserChats,
     getUser,
-    getLastMessage
+    getLastMessage,
+    clearChat
 };
 

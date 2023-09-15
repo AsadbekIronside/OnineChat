@@ -33,4 +33,5 @@ module.exports = function (app) {
       app.get('/get-chats', isUserAllowed, mainController.get_chats);
 
       app.get('/start-chat', isUserAllowed, mainController.start_chat);
+      app.get('/clear-chat', isUserAllowed, mainController.clear_chat);
 }

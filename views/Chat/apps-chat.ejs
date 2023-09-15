@@ -1,4 +1,6 @@
 <%- contentFor('HeaderCss') %>
+<!-- Sweet Alert-->
+<link href="public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 
 <%- contentFor('breadcrumb') %>
 
@@ -55,20 +57,20 @@
                         </li>
                         <li class="d-none d-sm-inline-block">
                             <div class="search-box me-2">
-                                <div class="position-relative">
+                                <div class="position-relative" id="search" hidden>
                                     <input type="text" class="form-control" placeholder="Search...">
                                     <i class="mdi mdi-magnify search-icon"></i>
                                 </div>
                             </div>
                         </li>
                         <li class="list-inline-item m-0 d-none d-sm-inline-block">
-                            <div class="dropdown">
+                            <div class="dropdown"  id="params" hidden>
                                 <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="mdi mdi-cog"></i>
+                                    <i class="bi bi-three-dots"></i>
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <a class="dropdown-item" href="#toUserProfile" data-bs-toggle="modal">View Profile</a>
-                                    <a class="dropdown-item" href="javascript:void(0);" id="basicAlert">Clear chat</a>
+                                    <a class="dropdown-item" href="javascript:void(0);" id="sa-params">Clear chat</a>
                                 </div>
                             </div>
                         </li>
@@ -196,5 +198,9 @@
 </div>
 
 <%- contentFor('FooterJs') %>
+<!-- Sweet Alerts js -->
+<script src="public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
 
+<!-- Sweet alert init js-->
+<script src="public/assets/js/pages/sweet-alerts.init.js"></script>
 <%- contentFor('BottomJs') %>
