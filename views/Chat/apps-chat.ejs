@@ -13,7 +13,7 @@
         <div class="card-body border-bottom py-3">
             <div class="search-box chat-search-box">
                 <div class="position-relative">
-                    <input type="text" class="form-control" placeholder="Search...">
+                    <input type="text" class="form-control" placeholder="Search..." id="searchChats">
                     <i class="ri-search-line search-icon"></i>
                 </div>
             </div>
@@ -63,10 +63,10 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="list-inline-item m-0 d-none d-sm-inline-block">
+                        <li class="list-inline-item m-0 d-sm-inline-block">
                             <div class="dropdown"  id="params" hidden>
                                 <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="bi bi-three-dots"></i>
+                                    <i class="mdi mdi-dots-horizontal"></i>
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <a class="dropdown-item" href="#toUserProfile" data-bs-toggle="modal">View Profile</a>
@@ -158,6 +158,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" style="color: darkgreen;" id="staticBackdropLabel">Contacts</h5>
+                <form class="app-search d-lg-block ms-lg-5 ms-sm-2">
+                    <div class="position-relative">
+                        <input type="text" class="form-control" placeholder="<%=translation.Search%>" id="searchContact">
+                        <span class="ri-search-line"></span>
+                    </div>
+                </form>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="modal_close_contact"></button>
             </div>
             <div class="modal-body" style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">

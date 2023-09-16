@@ -8,33 +8,38 @@ const post_user = async(user)=>{
 
 }
 
-const get_user = async(user)=>{
+const get_user = async(user_id)=>{
     return await knex('tb_users').select(['user_id', 'username', 'account_name', 'user_status', 'profile_photo'])
-    .where(knex.raw(`username="${user.username}" AND password="${user.password}"`))
+    .where('user_id', '=', user_id)
     .andWhere('user_status', '=', '1');
+}
+
+const get_password = async(username)=>{
+    return await knex('tb_users').select(['password', 'user_id']).where('username', '=', username).andWhere('user_status', '=', '1');
 }
 
 const delete_user = async(userId)=>{
     return await knex('tb_users').where({user_id:userId}).update({user_status:0, delete_time:new Date()});
 }
 
-const check_password_exists = async(password)=>{
-    return await knex('tb_users').select('user_id').where('password', '=', password).andWhere('user_status', '=', '1');
+const getAllPasswords = async()=>{
+    return await knex('tb_users').select('password').where('user_status', '=', '1');
 }
 
 const check_username_exists = async(username)=>{
     return await knex('tb_users').select('user_status').where('username', '=', username).andWhere('user_status', '=', '1');
 }
 
-const find_user_password = async(user)=>{
-    return await knex('tb_users').select('password').where(knex.raw(`user_id=${user.user_id} AND password="${user.password}"`));
+const find_user_password = async(user_id)=>{
+    return await knex('tb_users').select('password').where('user_id', '=', user_id).andWhere('user_status', '=', '1');
 }
 
 module.exports = {
     post_user,
     get_user,
     delete_user,
-    check_password_exists,
+    getAllPasswords,
     check_username_exists,
-    find_user_password
+    find_user_password,
+    get_password
 }

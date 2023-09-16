@@ -1,11 +1,14 @@
 
-async function addMessage(message, to_user_info) {
+function addMessage(message, to_user_info) {
 
     const time = new Date(message.create_time);
-    const hours = time.getHours();
+    var hours = time.getHours();
     var minutes = time.getMinutes();
     if (minutes < 10) {
         minutes = '0' + minutes;
+    }
+    if(hours < 10){
+        hours = '0' + hours;
     }
     var temp;
     if (message.from_user_id !== to_user_info.user_id) {
@@ -14,17 +17,18 @@ async function addMessage(message, to_user_info) {
                             <div class="ctext-wrap">
                                 <div class="ctext-wrap-content">
                                     <p class="mb-0">${message.message}</p>
-
-                                    <a href="#" style="position:absolute; rigtht:0; bottom:26px; margin-left:15px;" class="dropdown-toggle" data-toggle="dropdown">
-                                       <i class="bi bi-three-dots-vertical fa-lg"></i>
+                                 <div class="btn-group dropstart" style="position:absolute; rigtht:0; bottom:26px; margin-left:15px;">
+                                    <a class="dropdown-toggle" data-bs-toggle="dropdown" data-toggle="dropdown">
+                                    <i class="ri-more-2-fill ri-lg"></i>
                                     </a>
-                                    <ul class="dropdown-menu">
-                                      <li><a href="#">Foo</a></li>
-                                      <li><a href="#">Bar</a></li>
-                                    </ul>
-            
+                                 <div class="dropdown-menu">
+                                     <a class="dropdown-item" href="#"><i class="ri-pencil-fill"></i></a>
+                                     <a class="dropdown-item" href="#"><i class="ri-delete-bin-7-fill"></i></a>
+                                 </div>
+                             </div>
                                 </div>
                                 <p class="chat-time mb-0"><i class="mdi mdi-clock-outline me-1"></i> ${hours}:${minutes}</p>
+                                 
                             </div>
                             
                         </div>
@@ -51,13 +55,17 @@ async function addMessage(message, to_user_info) {
     scrollToBottom();
 }
 
-function sendMesssage() {
+async function sendMesssage() {
     const mess = document.getElementById('message').value;
     const toUserId = document.getElementById('userId').innerHTML;
+    const time = new Date();
+
+    document.getElementById('message').value = '';
+
     if (!mess)
         return;
-    const time = new Date();
-    fetch('/post-messages', {
+
+        await fetch('/post-messages', {
         method: "POST",
         mode: "cors",
         headers: { "Content-type": "application/json; charset=UTF-8" },
@@ -67,29 +75,29 @@ function sendMesssage() {
             to_user_id: toUserId
         })
     });
-    document.getElementById('message').value = '';
 }
 var count = 0;
+
 async function getMessages(to_user_id) {
     console.log('count=' + count);
     const response = await fetch('/get-messages?count=' + count + '&toUserId=' + to_user_id)
         .then(response => response.json());
 
     const messageList = response.array;
-    console.log(messageList);
+    // console.log(messageList);
     const to_user_info = response.to_user_info;
 
     if (messageList.length > 0) {
         count = messageList[messageList.length - 1].message_id;
-        console.log('zzzzzzzzzzzzzzzzzzzzz=' + count);
-        messageList.forEach(async function (element) {
-            await addMessage(element, to_user_info);
+        // console.log('zzzzzzzzzzzzzzzzzzzzz=' + count);
+        messageList.forEach((element)=>{
+            addMessage(element, to_user_info);
         });
     }
 }
 
-document.getElementById('send_button').addEventListener('click', () => {
-    sendMesssage();
+document.getElementById('send_button').addEventListener('click', async() => {
+    await sendMesssage();
 });
 
 // press enter
@@ -122,20 +130,21 @@ var result;
 
 const add_contacts = async (user) => {
     const contactTemp =
-        `<a href="javascript: void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_new_chat(${user.user_id})">
-    <div class="card m-0">
-       <div class="row no-gutters align-items-center">
-         <div class="col-md-4">
-         <img src="${user.profile_photo}" class="rounded-circle ms-3" style="height:80px;">
-         </div>
-          <div class="col-md-8">
-            <div class="card-body">
-              <h6 class="fw-bolder">${user.account_name}</h6><small class="fw-bolder text-primary">@${user.username}</small>
-             </div>
-           </div>
-       </div>
-     </div>
-    </a> `;
+        `<a href="javascript: void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_new_chat(${user.user_id})" 
+         id="a${user.user_id}">
+            <div class="card m-0">
+            <div class="row no-gutters align-items-center">
+                <div class="col-md-4">
+                <img src="${user.profile_photo}" class="rounded-circle ms-3" style="height:80px;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                    <h6 class="fw-bolder">${user.account_name}</h6><small class="fw-bolder text-primary">@${user.username}</small>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </a> `;
 
     result += contactTemp;
 }
@@ -146,6 +155,8 @@ const get_contacts = async () => {
     await fetch('/get-contacts')
         .then(response => response.json())
         .then(data => {
+            localStorage.removeItem('contacts');
+            localStorage.setItem('contacts', JSON.stringify(data));
             data.contacts.forEach(user => add_contacts(user));
             $('#modal_body_group').append(result);
         });
@@ -179,6 +190,32 @@ const start_new_chat = async (userId) => {
     document.querySelector('#modal_close_contact').click();
 };
 
+///// live search contacts
+
+document.getElementById('searchContact').addEventListener('keyup', ()=>{
+    let val = document.getElementById('searchContact').value;
+
+    console.log('val = '+val);
+
+    let contacts = localStorage.getItem('contacts');
+    contacts = JSON.parse(contacts).contacts;
+    // console.log(contacts);
+    contacts.forEach((user)=>{
+
+        // console.log(typeof user);
+
+        // console.log();
+        if(user.username.includes(val)){
+            console.log(user);
+            childNode = document.getElementById('a'+user.user_id);
+            document.getElementById('modal_body_group').removeChild(childNode);
+            document.getElementById('modal_body_group').prepend(childNode);
+        }
+    });
+});
+
+
+
 //// get chats
 
 var resultChat;
@@ -197,8 +234,8 @@ const add_chats = async (user) => {
         resultTime = now.getMinutes() - time.getMinutes() + ' minutes ago';
 
     const contactTemp =
-        ` <li id="${user.user_id}">
-            <a href="#" class="list-group-item list-group-item-action fw-bolder" onclick="start_chat(${user.user_id})">
+        ` <li id="b${user.user_id}">
+            <a href="javascript:void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_chat(${user.user_id})">
                 <div class="d-flex">
                     <div class="user-img away  align-self-center me-4 ">
                         <img src="${user.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:50px;width:50px;">
@@ -220,7 +257,8 @@ const get_chats = async () => {
     await fetch('/get-chats')
         .then(response => response.json())
         .then(data => {
-            data.contacts.forEach(user => add_chats(user));
+            localStorage.setItem('chats', JSON.stringify(data))
+            data.chats.forEach(user => add_chats(user));
             $('#chatsGroup').append(resultChat);
         });
 }
@@ -271,6 +309,29 @@ const start_chat = async (userId) => {
     document.querySelector('#modal_close_chat').click();
 };
 
+////  search chats
+
+document.getElementById('searchChats').addEventListener('keyup', ()=>{
+    let val = document.getElementById('searchChats').value;
+
+    console.log('val = '+val);
+
+    let chats = localStorage.getItem('chats');
+    chats = JSON.parse(chats).chats;
+    // console.log(contacts);
+    chats.forEach((user)=>{
+
+        // console.log(typeof user);
+
+        // console.log();
+        if(user.username.includes(val)){
+            // console.log(user);
+            childNode = document.getElementById('b'+user.user_id);
+            document.getElementById('chatsGroup').removeChild(childNode);
+            document.getElementById('chatsGroup').prepend(childNode);
+        }
+    });
+});
 
 
 //alerts
@@ -282,5 +343,5 @@ async function clearChat(){
     const response = await fetch('/clear-chat?userId='+to_user_id)
     .then(response => response.json());
 
-    return String(response.ok).startsWith('ok') ? Number(response.result) : -1;
+    return response.ok.startsWith('ok') ? parseInt(response.result) : -1;
 }

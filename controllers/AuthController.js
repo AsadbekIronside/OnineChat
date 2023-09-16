@@ -1,5 +1,8 @@
+var jwt = require('jsonwebtoken');
+var bcrypt = require('bcrypt');
 ///////  crud user
-var { post_user, get_user, delete_user, check_password_exists, find_user_password, check_username_exists} = require('../model/auth_crud');
+var { post_user, get_user, delete_user, getAllPasswords, find_user_password, check_username_exists,
+     get_password} = require('../model/auth_crud');
 
 const pages_login = (req, res)=>{
 	res.locals = { title: 'Login 1' };
@@ -35,11 +38,20 @@ const login = (req, res)=>{
 
 const post_login = async(req, res)=>{
     try {
-        const user = await get_user(req.body);
-        if (user[0]) {
+        var user = await get_password(req.body.username);
+        if(!user[0] ){
+            req.flash('error', 'Username was not found!');
+            return res.redirect('/login');
+        }
+        var password = user[0].password;
+        var user_id = user[0].user_id;        
 
+        var result = await bcrypt.compare(req.body.password, password);
+
+        if (result) {
+            let userData = await get_user(user_id);
             sess = req.session;
-            sess.user = user[0];
+            sess.user = userData[0];
             res.redirect('/');
 
         } else {
@@ -78,8 +90,10 @@ const logout = (req, res)=>{
 }
 
 const page_unlock = async(req, res)=>{
-    const findUser = await find_user_password({user_id:req.session.user.user_id, password:req.body.password});
-    if(findUser.length===1){
+    const password = await find_user_password(req.session.user.user_id);
+    const result = await bcrypt.compare(req.body.password, password[0].password);
+
+    if(result){
         res.redirect('/');
     }
     else{
@@ -97,30 +111,44 @@ const deleteUser = async(req, res)=>{
 
 const post_register =  async(req, res)=>{
  
-    var username = String(req.body.username);
+    var username = req.body.username;
+    var password = req.body.password;
+    var acc_name = req.body.account_name;
+    var result = false;
+
     if(username.startsWith('@')){
         username = username.substring(1);
     }
-    const existsUserPass = await check_password_exists(req.body.password);
+    const allPasswords = await getAllPasswords();
     const existsUserUsername = await check_username_exists(username);
     
-    if(existsUserPass[0]){
-
-        req.flash('error', 'Password has already been used. Please create a new one!');
-        res.redirect('/register');
-
-    }else if(existsUserUsername[0]){
-
-        req.flash('error', 'Username have already been taken. Please find a new one!');
-        res.redirect('/register');
-
-    } else {
-        const user = await post_user(req.body);
-        // Assign value in session
-        sess = req.session;
-        sess.user = user[0];
-        res.redirect('/');
+    for(let i=0; i < allPasswords.length; i++){
+        result = await bcrypt.compare(password, allPasswords[i].password);
+        if(result){
+            req.flash('error', 'Password has already been used. Please create a new one!');
+            res.redirect('/register');
+            break;
+        }
     }
+    if(result === false){
+        
+        if(existsUserUsername[0]){
+
+            req.flash('error', 'Username have already been taken. Please find a new one!');
+            res.redirect('/register');
+
+        } else {
+
+            const cryptedPassword = await bcrypt.hash(password, 10);
+            const user = await post_user({username:username, password:cryptedPassword, account_name: acc_name});
+            // Assign value in session
+            sess = req.session;
+            sess.user = user[0];
+            res.redirect('/');
+        }
+        
+    }
+
 }
 
 

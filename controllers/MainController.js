@@ -1,14 +1,8 @@
-const { postMessages, getMessages, getUserContacts, getUserChats, getUser,
-        getLastMessage, clearChat} = require('../model/crud');
+const { postMessages, getMessages, getUserContacts, getUserChats, getUser, clearChat} = require('../model/crud');
 
 const get_main_page = async(req, res)=>{
     res.locals = { title: 'chat' };
     var name;
-    if (req.session.user.id === 1)
-          name = 'Asadbek Shariyorov';
-    else
-          name = 'Frank Vickery';
-
     res.render('Chat/apps-chat', { user_name: name, profilePhoto:req.session.user.profile_photo, 
           account_name:req.session.user.account_name, username:req.session.user.username});
 }
@@ -42,10 +36,10 @@ const get_chats = async(req, res)=>{
 
     let current_user = req.session.user.user_id;
     //get all users
-    const contactsList = await getUserChats(current_user);
+    let chatsList = await getUserChats(current_user);
 
-    console.log(contactsList);
-    res.json({contacts:contactsList});
+    // console.log(contactsList);
+    res.json({chats:chatsList});
 }
 
 const start_chat = async(req, res)=>{
