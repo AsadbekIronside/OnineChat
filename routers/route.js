@@ -34,4 +34,8 @@ module.exports = function (app) {
 
       app.get('/start-chat', isUserAllowed, mainController.start_chat);
       app.get('/clear-chat', isUserAllowed, mainController.clear_chat);
+      app.get('/get-unreplied', isUserAllowed, mainController.get_unreplied);
+
+      app.post('/update-user-name', isUserAllowed, mainController.update_account_name);
+      app.get('/get-user-info', isUserAllowed, mainController.get_user_info);
 }

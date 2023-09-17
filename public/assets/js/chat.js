@@ -54,8 +54,7 @@ function addMessage(message, to_user_info) {
     $('#messageList').append(temp);
     scrollToBottom();
 }
-
-async function sendMesssage() {
+function sendMesssage() {
     const mess = document.getElementById('message').value;
     const toUserId = document.getElementById('userId').innerHTML;
     const time = new Date();
@@ -65,7 +64,7 @@ async function sendMesssage() {
     if (!mess)
         return;
 
-        await fetch('/post-messages', {
+        fetch('/post-messages', {
         method: "POST",
         mode: "cors",
         headers: { "Content-type": "application/json; charset=UTF-8" },
@@ -97,7 +96,7 @@ async function getMessages(to_user_id) {
 }
 
 document.getElementById('send_button').addEventListener('click', async() => {
-    await sendMesssage();
+    sendMesssage();
 });
 
 // press enter
@@ -131,20 +130,20 @@ var result;
 const add_contacts = async (user) => {
     const contactTemp =
         `<a href="javascript: void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_new_chat(${user.user_id})" 
-         id="a${user.user_id}">
-            <div class="card m-0">
-            <div class="row no-gutters align-items-center">
-                <div class="col-md-4">
-                <img src="${user.profile_photo}" class="rounded-circle ms-3" style="height:80px;">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                    <h6 class="fw-bolder">${user.account_name}</h6><small class="fw-bolder text-primary">@${user.username}</small>
+            id="a${user.user_id}">
+                <div class="card m-0">
+                <div class="row no-gutters align-items-center">
+                    <div class="col-md-4">
+                    <img src="${user.profile_photo}" class="rounded-circle ms-3" style="height:80px;">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                        <h6 class="fw-bolder">${user.account_name}</h6><small class="fw-bolder text-primary">@${user.username}</small>
+                        </div>
                     </div>
                 </div>
-            </div>
-            </div>
-        </a> `;
+                </div>
+         </a> `;
 
     result += contactTemp;
 }
@@ -165,37 +164,54 @@ const get_contacts = async () => {
 var myInterval = setInterval(() => { }, 10000);
 
 const start_new_chat = async (userId) => {
+
+    // console.log('This inside start_chat');
     count = 0;
     clearInterval(myInterval);
+
     const response = await fetch('/start-chat?userId=' + userId)
         .then(response => response.json());
+        
     const toUser = $('#to_user');
     toUser.html('');
 
     const result =
         `<h5 class="font-size-15 mb-1 text-truncate">${response.account_name}<p id="userId" hidden>${response.user_id}</p></h5>
     <p class="text-truncate mb-0"><i class="mdi mdi-circle text-success align-middle me-1"></i> Active now</p>`;
-
     toUser.append(result);
+
     $('#messageList').html('');
 
+    const cardBody =
+        `<h5 class="card-title fw-bolder">Name:</h5>
+            <h6 class="card-text ">${response.account_name}</h6>
+            <h5 class="card-title fw-bolder">Username:</h5>
+            <p class="card-text ">@${response.username}</p>
+            <p class="card-text"><small class="text-primary">Active now</small></p>`;
+
+    $('#cardBody').append(cardBody);
+    
     document.getElementById('search').removeAttribute('hidden');
     document.getElementById('params').removeAttribute('hidden');
 
-    myInterval = setInterval(() => {
-        getMessages(userId);
+    myInterval = setInterval(async () => {
+        await getMessages(userId);
         // console.log('log ishlavotti');
-    }, 1000);
+    }, 800);
 
     document.querySelector('#modal_close_contact').click();
+    
 };
+
+
 
 ///// live search contacts
 
 document.getElementById('searchContact').addEventListener('keyup', ()=>{
+
     let val = document.getElementById('searchContact').value;
 
-    console.log('val = '+val);
+    // console.log('val = '+val);
 
     let contacts = localStorage.getItem('contacts');
     contacts = JSON.parse(contacts).contacts;
@@ -205,7 +221,7 @@ document.getElementById('searchContact').addEventListener('keyup', ()=>{
         // console.log(typeof user);
 
         // console.log();
-        if(user.username.includes(val)){
+        if(user.username.toLowerCase().includes(val.toLowerCase())){
             console.log(user);
             childNode = document.getElementById('a'+user.user_id);
             document.getElementById('modal_body_group').removeChild(childNode);
@@ -234,8 +250,7 @@ const add_chats = async (user) => {
         resultTime = now.getMinutes() - time.getMinutes() + ' minutes ago';
 
     const contactTemp =
-        ` <li id="b${user.user_id}">
-            <a href="javascript:void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_chat(${user.user_id})">
+        ` <a href="javascript:void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_chat(${user.user_id})" id="b${user.user_id}">
                 <div class="d-flex">
                     <div class="user-img away  align-self-center me-4 ">
                         <img src="${user.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:50px;width:50px;">
@@ -246,8 +261,7 @@ const add_chats = async (user) => {
                     </div>
                     <div class="font-size-11">${resultTime}</div>
                 </div>
-            </a>
-         </li>`;
+           </a>`;
 
     resultChat += contactTemp;
 }
@@ -302,17 +316,17 @@ const start_chat = async (userId) => {
     document.getElementById('search').removeAttribute('hidden');
     document.getElementById('params').removeAttribute('hidden');
 
-    myInterval = setInterval(() => {
-        getMessages(userId);
+    myInterval = setInterval(async () => {
+        await getMessages(userId);
         // console.log('log ishlavotti');
-    }, 1000);
-    document.querySelector('#modal_close_chat').click();
+    }, 800);
+
 };
 
 ////  search chats
 
 document.getElementById('searchChats').addEventListener('keyup', ()=>{
-    let val = document.getElementById('searchChats').value;
+    var val = document.getElementById('searchChats').value;
 
     console.log('val = '+val);
 
@@ -324,7 +338,7 @@ document.getElementById('searchChats').addEventListener('keyup', ()=>{
         // console.log(typeof user);
 
         // console.log();
-        if(user.username.includes(val)){
+        if(user.username.toLowerCase().includes(val.toLowerCase())){
             // console.log(user);
             childNode = document.getElementById('b'+user.user_id);
             document.getElementById('chatsGroup').removeChild(childNode);
@@ -344,4 +358,130 @@ async function clearChat(){
     .then(response => response.json());
 
     return response.ok.startsWith('ok') ? parseInt(response.result) : -1;
+}
+
+
+
+
+/////Notification
+
+var resultUnrep;
+
+const add_unreplied = async (user)=>{
+
+    var now = new Date();
+    var time = new Date(user.create_time);
+    var resultTime;
+    // console.log(user);
+    if (now.getDate() - time.getDate() > 0)
+        resultTime = now.getDate() - time.getDate() + ' days ago';
+    else if (now.getHours() - time.getHours() > 0)
+        resultTime = now.getHours() - time.getHours() + ' hours ago';
+    else
+        resultTime = now.getMinutes() - time.getMinutes() + ' minutes ago';
+    
+    var unrepliedTemp =
+    `<li id="c${user.user_id}">
+        <a href="javascript:void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_unreplied_chat(${user.user_id})">
+            <div class="d-flex">
+                <img src="${user.profile_photo}" class="me-3 rounded-circle avatar-xs" alt="user-pic">
+                <div class="flex-1">
+                    <h6 class="mt-0 mb-1">${user.account_name}</h6>
+                    <div class="font-size-12 text-muted">
+                        <p class="mb-1">${user.message}.</p>
+                        <p class="mb-0"><i class="mdi mdi-clock-outline me-2"></i>${resultTime}</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+     </li>`;
+
+     resultUnrep+=unrepliedTemp;
+
+}
+
+const get_unreplied = async () => {
+
+    $('#notifGroup').html('');
+    resultUnrep = '';
+    await fetch('/get-unreplied')
+        .then(response => response.json())
+        .then(data => {
+            data.result.forEach(user => add_unreplied(user));
+            $('#notifGroup').append(resultUnrep);
+
+            if(data.result.length>0){
+                document.querySelector('.noti-dot').removeAttribute('hidden');
+            }else{
+                document.querySelector('.noti-dot').setAttribute('hidden', true);
+            }
+        });
+}
+
+$(document).ready(async()=>{
+   await get_unreplied();
+});
+
+const start_unreplied_chat = async(userId)=>{
+    await start_chat(userId);
+
+    var child = document.getElementById('c'+userId);
+    var fatherDiv = document.getElementById('notifGroup');
+    fatherDiv.removeChild(child);
+
+    // await get_unreplied();
+
+}
+
+
+
+////////////////////save account_name
+
+
+document.getElementById('saveName').addEventListener('click', async()=>{
+    let val = document.getElementById('newName').value;
+    document.getElementById('newName').value='';
+    // console.log('value='+val);
+    if(val){
+        await fetch('/update-user-name', {
+            method:'POST',
+            mode:'cors',
+            headers:{"Content-type":"application/json; charset=UTF-8"},
+            body:JSON.stringify({name:val})
+        }).then(response=>response.json());
+        document.getElementById('accountName').innerHTML = val;
+        document.getElementById('topRigthName').innerHTML = val;
+    }
+});
+
+/////
+
+const show_user_profile = async()=>{
+
+    let user = await fetch('get-user-info')
+    .then(response => response.json())
+    .then(response => response.result );
+
+    let userProfile = 
+    `   <div class="col-md-4">
+            <img class="card-img img-fluid rounded-circle img-thumbnail" src="${user.profile_photo}" alt="Card image">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title fw-bolder">Name:</h5>
+                <h6 class="card-text " id="accountName">${user.account_name}</h6>
+                <h5 class="card-title fw-bolder">Username:</h5>
+                <p class="card-text ">@${user.username}</p>
+                <p class="card-text"><small class="text-primary">Active now</small></p>
+            </div>
+        </div>`;
+
+    let currentName = 
+    `Current Name:<input type="text" class="form-control" value="${user.account_name}" style="width: 60%;" readonly>`
+       
+    $('#userProfileCard').html('');
+    $('#userProfileCard').append(userProfile);
+    $('#currentName').html('');
+    $('#currentName').append(currentName);
+    $('#topRigthName').html(user.account_name);
 }

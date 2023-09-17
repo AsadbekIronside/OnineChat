@@ -23,8 +23,10 @@
             <div class="" id="chat">
                 <div>
                     <h5 class="font-size-14 px-3 mb-3">Chats</h5>
-                    <ul class="list-unstyled chat-list" data-simplebar style="max-height: 500px;" id="chatsGroup">
-                    </ul>
+                    <!-- <ul class="list-unstyled chat-list" data-simplebar style="max-height: 500px;" id="chatsGroup">
+                    </ul> -->
+                    <div class="list-group"  style="max-height: 500px;" id="chatsGroup">
+                    </div>
                 </div>
             </div>
 
@@ -110,7 +112,7 @@
 
 <div class="col-sm-6 col-md-4 col-xl-3">
     <!-- Modal user profile -->
-    <div class="modal fade" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="myModal" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -120,32 +122,20 @@
                 <div class="modal-body">
                     <div class="col-12">
                         <div class="card">
-                            <div class="row no-gutters align-items-center border bg-white border-warning">
-                                <div class="col-md-4">
-                                    <img class="card-img img-fluid rounded-circle img-thumbnail" src=<%=profilePhoto%> alt="Card image">
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title fw-bolder">Name:</h5>
-                                        <h6 class="card-text "><%=account_name%></h6>
-                                        <h5 class="card-title fw-bolder">Username:</h5>
-                                        <p class="card-text ">@<%=username%></p>
-                                        <p class="card-text"><small class="text-primary">Active now</small></p>
-                                    </div>
-                                </div>
+                            <div class="row no-gutters align-items-center border bg-white border-warning"  id="userProfileCard">
                             </div>
                         </div>
                     </div>
             
                     <form>
                         <label class="dropdown-item" for="image">
-                            <i class="ri-image-add-fill align-middle me-1 ri-lg text-success"></i>Change profile photo
+                            <i class="ri-image-add-fill align-middle me-1 ri-lg text-success"></i>Change Profile Photo
                             <input type="file" id='image'name="profile_photo" accept="image/*" hidden>
                         </label>    
                     </form>
-                    <a href="#modal2" data-bs-toggle="modal" data-bs-target="#modal2" class="text-dark ms-4">
+                    <a href="#modalUsername" data-bs-toggle="modal" data-bs-target=".bs-example-modal-center" class="text-dark ms-4">
                         <i class="ri-pencil-line align-middle me-1 ri-lg text-success"></i>
-                        <span>Change username</span>
+                        <span>Change Name</span>
                     </a>
                 </div>
             </div>
@@ -174,6 +164,8 @@
     </div>
 </div>
 
+<!-- toUser profile  -->
+
 <div class="modal fade" id="toUserProfile" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -189,7 +181,6 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="card-body" id="cardBody">
-   
                                 </div>
                             </div>
                         </div>
@@ -200,6 +191,28 @@
     </div>
     
 </div>
+</div>
+
+<div class="col-sm-4 col-md-2 col-xl-1">
+    
+    <div class="modal fade bs-example-modal-center" tabindex="-1" aria-labelledby="mySmallModalLabel" aria-hidden="true"
+     id="modalUsername" style="background-color: rgba(0, 0, 0, .5);">
+        <div class="modal-dialog modal-dialog-centered" style="width: 15%;">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form>
+                        <label class="form-label" id="currentName">
+                        </label>
+                        <label class="form-label" for="newName">
+                            New Name:
+                            <input type="text" class="form-control" placeholder="Enter name..." id="newName">
+                        </label>
+                        <button type="button" class=" btn btn-success border btn-sm" id="saveName" data-bs-dismiss="modal">Save</button>
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
 
 </div>
 

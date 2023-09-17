@@ -40,18 +40,10 @@ const getUserChats = async(current_user_id)=>{
     .from(users).innerJoin('users', 'tb_users.user_id', 'users.from_user_id').where('tb_users.user_status', '=', '1');
 }
 
-const getLastMessage = async(user_id, current_user_id)=>{
-    return await knex(messages).select(['message', 'create_time'])
-    .where({
-        from_user_id:user_id,
-        to_user_id:current_user_id
-    }).orderBy('create_time', 'desc')
-    .limit(1);
-}
-
 const getUser = async(user_id)=>{
     return await knex(users).select(['user_id', 'username', 'account_name', 'profile_photo'])
-    .where('user_id', '=', user_id);
+    .where('user_id', '=', user_id)
+    .andWhere('user_status', '=', '1');
 }
 
 const clearChat = async(from_user_id, to_user_id)=>{
@@ -61,13 +53,37 @@ const clearChat = async(from_user_id, to_user_id)=>{
 
 }
 
+const getOnesUserTyped = async(user_id)=>{
+    return await knex(messages).select(['message_id', 'from_user_id', 'to_user_id'])
+    .where('message_status', '=', '1')
+    .andWhere(knex.raw(`message_id IN (SELECT MAX(message_id) FROM tb_messages WHERE from_user_id=${user_id} GROUP BY to_user_id)`));
+}
+
+const getOnesTypedUser = async(user_id)=>{
+    return await knex(messages).select(['message_id', 'from_user_id', 'to_user_id'])
+    .where('message_status', '=', '1')
+    .andWhere(knex.raw(`message_id IN (SELECT MAX(message_id) FROM tb_messages WHERE to_user_id=${user_id} GROUP BY from_user_id)`));
+}
+
+const getMessageById = async(id)=>{
+    return await knex(messages).select(['message_id', 'message', 'create_time'])
+    .where('message_id', '=', id).andWhere('message_status', '=', '1');
+}
+
+const updateAccountName = async(id, name)=>{
+    return await knex(users).update({account_name:name, update_time: new Date()}).where('user_id', '=', id);
+}
+
 module.exports = {
     postMessages,
     getMessages,
     getUserContacts,
     getUserChats,
     getUser,
-    getLastMessage,
-    clearChat
+    clearChat,
+    getOnesTypedUser,
+    getOnesUserTyped,
+    getMessageById,
+    updateAccountName
 };
 

@@ -45,88 +45,26 @@
 
             <div class="dropdown d-inline-block mx-2">
                 <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown" 
-                    data-bs-toggle="dropdown" aria-expanded="false">
+                    data-bs-toggle="dropdown" aria-expanded="false" onclick="get_unreplied()">
                     <i class="ri-notification-3-line"></i>
-                    <span class="noti-dot"></span>
+                    <span class="noti-dot" hidden></span>
                 </button>
+                  
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
                     aria-labelledby="page-header-notifications-dropdown">
                     <div class="p-3">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h6 class="m-0"> <%=translation.Notifications%> </h6>
-                            </div>
-                            <div class="col-auto">
-                                <a href="#!" class="small"> <%=translation.View_All%></a>
+                                <h6 class="m-0 fw-bolder"> <%=translation.Notifications%> </h6>
                             </div>
                         </div>
                     </div>
-                    <div data-simplebar style="max-height: 230px;">
-                        <a href="" class="text-reset notification-item">
-                            <div class="d-flex">
-                                <div class="avatar-xs me-3">
-                                    <span class="avatar-title bg-primary rounded-circle font-size-16">
-                                        <i class="ri-shopping-cart-line"></i>
-                                    </span>
-                                </div>
-                                <div class="flex-1">
-                                    <h6 class="mt-0 mb-1"><%=translation.Your_order_is_placed%></h6>
-                                    <div class="font-size-12 text-muted">
-                                        <p class="mb-1"><%=translation.If_several_languages_coalesce_the_grammar%></p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> 3 min ago</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="" class="text-reset notification-item">
-                            <div class="d-flex">
-                                <img src="public/assets/images/users/avatar-3.jpg"
-                                    class="me-3 rounded-circle avatar-xs" alt="user-pic">
-                                <div class="flex-1">
-                                    <h6 class="mt-0 mb-1"><%=translation.James_Lemire%></h6>
-                                    <div class="font-size-12 text-muted">
-                                        <p class="mb-1"><%=translation.It_will_seem_like_simplified_English%>.</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> 1 hours ago</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="" class="text-reset notification-item">
-                            <div class="d-flex">
-                                <div class="avatar-xs me-3">
-                                    <span class="avatar-title bg-success rounded-circle font-size-16">
-                                        <i class="ri-checkbox-circle-line"></i>
-                                    </span>
-                                </div>
-                                <div class="flex-1">
-                                    <h6 class="mt-0 mb-1"><%=translation.Your_item_is_shipped%></h6>
-                                    <div class="font-size-12 text-muted">
-                                        <p class="mb-1"><%=translation.If_several_languages_coalesce_the_grammar%></p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> 3 min ago</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <a href="" class="text-reset notification-item">
-                            <div class="d-flex">
-                                <img src="public/assets/images/users/avatar-4.jpg"
-                                    class="me-3 rounded-circle avatar-xs" alt="user-pic">
-                                <div class="flex-1">
-                                    <h6 class="mt-0 mb-1"><%=translation.Salena_Layfield%></h6>
-                                    <div class="font-size-12 text-muted">
-                                        <p class="mb-1"><%=translation.As_a_skeptical_Cambridge_friend_of_mine_occidental%>.</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> 1 hours ago</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+                    <!-- <div data-simplebar style="max-height: 230px;" id="notifGroup">
+            
+                    </div> -->
+                    <ul class="list-unstyled chat-list" data-simplebar style="max-height: 230px;" id="notifGroup"></ul>
                     <div class="p-2 border-top">
                         <div class="d-grid">
-                            <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
-                                <i class="mdi mdi-arrow-right-circle me-1"></i> <%=translation.View_More%>
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -139,12 +77,12 @@
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <img class="rounded-circle header-profile-user" src=<%=profilePhoto%>
                     alt="Header Avatar">
-                <span class="d-none d-xl-inline-block ms-1"><%=account_name%></span>
+                <span class="d-none d-xl-inline-block ms-1" id="topRigthName"><%=account_name%></span>
                 <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
             </button>
             <div class="dropdown-menu dropdown-menu-end">
 
-                <a  href="#myModal" data-bs-toggle="modal" class="dropdown-item"><i class="ri-account-circle-line align-middle me-1 ri-lg"></i><span> <%=translation.My_account%></span></a>
+                <a  href="#myModal" data-bs-toggle="modal" class="dropdown-item"  onclick="show_user_profile()"><i class="ri-account-circle-line align-middle me-1 ri-lg"></i><span> <%=translation.My_account%></span></a>
                 <a  href="/pages-lock-screen" class="dropdown-item"><i class="ri-lock-unlock-line align-middle me-1 ri-lg"></i><span><%=translation.Lock_screen%></span></a>
                 <a  href="/logout" class="dropdown-item"><i class="ri-logout-box-line align-middle me-1 ri-lg"></i><span><%=translation.Logout%></span></a>
                 <a  href="/register" class="dropdown-item"><i class="ri-login-box-line align-middle me-1 ri-lg"></i><span><%=translation.Register%></span></a>

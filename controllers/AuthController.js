@@ -19,10 +19,13 @@ const pages_recoverpw = (req, res)=>{
 	res.render('AuthInner/pages-recoverpw');
 }
 
-const pages_lock_screen = (req, res)=>{
+const pages_lock_screen = async(req, res)=>{
+
+    const user = await get_user(req.session.user.user_id);
 	res.locals = { title: 'Lock Screen 1' };
 	res.render('AuthInner/pages-lock-screen', { 'message': req.flash('message'), 'error': req.flash('error'), 
-	'account_name':req.session.user.account_name , 'profilePhoto':req.session.user.profile_photo});
+	'account_name':user[0].account_name , 'profilePhoto':user[0].profile_photo});
+    
 }
 
 const register = (req, res)=>{

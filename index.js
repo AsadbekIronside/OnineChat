@@ -33,7 +33,8 @@ app.use(flash());
 app.use(i18n({
   translationsPath: path.join(__dirname, 'i18n'), // <--- use here. Specify translations files path.
   siteLangs: ["es", "en", "de", "ru", "it", "fr"],
-  textsVarName: 'translation'
+  textsVarName: 'translation',
+  defaultLocal: "en"
 }));
 
 // app.use(express.static(path.join(__dirname, 'public')));

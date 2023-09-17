@@ -1,10 +1,10 @@
-const { postMessages, getMessages, getUserContacts, getUserChats, getUser, clearChat} = require('../model/crud');
+const { postMessages, getMessages, getUserContacts, getUserChats, getUser, clearChat,
+        getOnesTypedUser, getOnesUserTyped, getMessageById, updateAccountName} = require('../model/crud');
 
 const get_main_page = async(req, res)=>{
     res.locals = { title: 'chat' };
-    var name;
-    res.render('Chat/apps-chat', { user_name: name, profilePhoto:req.session.user.profile_photo, 
-          account_name:req.session.user.account_name, username:req.session.user.username});
+    let user = await getUser(req.session.user.user_id);
+    res.render('Chat/apps-chat', { profilePhoto:user[0].profile_photo, account_name:user[0].account_name});
 }
 
 const post_messages = async (req, res) => {
@@ -60,6 +60,72 @@ const clear_chat = async(req, res)=>{
 
 }
 
+const get_unreplied = async(req, res)=>{
+
+    let user_id = req.session.user.user_id;
+    let userTypedList = await getOnesUserTyped(user_id);
+    let typedUserList = await getOnesTypedUser(user_id);
+
+    var userTypedMap = new Map() ;
+    var typedUserMap = new Map();
+
+    userTypedList.forEach((element)=>{
+        userTypedMap.set(element.to_user_id, element.message_id);   ///[2, 5], [5, 98]
+    });
+
+    typedUserList.forEach((element)=>{
+        typedUserMap.set(element.from_user_id, element.message_id); ////[2, 9], [3, 87]
+    });
+
+    var resultUsers = [];
+    var resultMessages = [];
+
+    Array.from(typedUserMap.keys()).forEach((el)=>{
+
+        if(!userTypedMap.has(el) || (userTypedMap.get(el) < typedUserMap.get(el))){
+            resultMessages.push(typedUserMap.get(el));
+            resultUsers.push(el);
+        }
+    
+    });
+
+    var obj;
+    var finalResult = [];
+    var message;
+    var user;
+    
+    for(let i=0; i < resultUsers.length; i++){
+
+        user = await getUser(resultUsers[i]);
+        message = await getMessageById(resultMessages[i]);
+
+        // console.log(user);
+        // console.log(message);
+        user = user[0];
+        message = message[0];
+
+        obj = { user_id: user.user_id, username:user.username, account_name: user.account_name, 
+                profile_photo:user.profile_photo, message: message.message, create_time:message.create_time};
+        finalResult.push(obj);
+
+    }
+
+    res.json({result:finalResult});
+    
+
+}
+
+const update_account_name = async(req, res)=>{
+    let result = await updateAccountName(req.session.user.user_id, req.body.name);
+    res.json({ok:'ok', result:result});
+}
+
+const get_user_info = async(req, res)=>{
+    let userInfo = await getUser(req.session.user.user_id);
+    res.json({ok:'ok', result:userInfo[0]})
+}
+
+
 module.exports = {
     get_main_page,
     post_messages,
@@ -67,5 +133,8 @@ module.exports = {
     get_contacts,
     get_chats,
     start_chat,
-    clear_chat
+    clear_chat,
+    get_unreplied,
+    update_account_name,
+    get_user_info
 }

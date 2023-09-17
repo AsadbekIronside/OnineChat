@@ -5,8 +5,8 @@ const create_users = async ()=>{
     await knex.schema.dropTableIfExists('tb_users');
     await knex.schema.createTable('tb_users', (table)=>{
         table.increments('user_id').primary();
-        table.string('username').notNullable().unique();
-        table.string('password').notNullable().unique();
+        table.string('username').notNullable();
+        table.string('password').notNullable();
         table.string('account_name').notNullable();
         table.tinyint('user_status').defaultTo(1);
         table.string('profile_photo').defaultTo("public/assets/images/chat_photos/default_profile_photo.jpg");
