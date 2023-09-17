@@ -25,7 +25,7 @@ const pages_lock_screen = async(req, res)=>{
 	res.locals = { title: 'Lock Screen 1' };
 	res.render('AuthInner/pages-lock-screen', { 'message': req.flash('message'), 'error': req.flash('error'), 
 	'account_name':user[0].account_name , 'profilePhoto':user[0].profile_photo});
-    
+
 }
 
 const register = (req, res)=>{
@@ -48,14 +48,15 @@ const post_login = async(req, res)=>{
         }
         var password = user[0].password;
         var user_id = user[0].user_id;        
-
+        var username = user[0].username;
         var result = await bcrypt.compare(req.body.password, password);
+        
+        if(username.localeCompare(req.body.username) === 0 && result){
 
-        if (result) {
             let userData = await get_user(user_id);
-            sess = req.session;
-            sess.user = userData[0];
-            res.redirect('/');
+                sess = req.session;
+                sess.user = userData[0];
+                res.redirect('/');
 
         } else {
             req.flash('error', 'Incorrect username or password!');
@@ -135,13 +136,12 @@ const post_register =  async(req, res)=>{
     }
     if(result === false){
         
-        if(existsUserUsername[0]){
+        if(existsUserUsername[0] && existsUserUsername[0].username.localeCompare(username) ===0 ){
 
             req.flash('error', 'Username have already been taken. Please find a new one!');
             res.redirect('/register');
 
         } else {
-
             const cryptedPassword = await bcrypt.hash(password, 10);
             const user = await post_user({username:username, password:cryptedPassword, account_name: acc_name});
             // Assign value in session

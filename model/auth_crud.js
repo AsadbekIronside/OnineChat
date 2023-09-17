@@ -15,7 +15,7 @@ const get_user = async(user_id)=>{
 }
 
 const get_password = async(username)=>{
-    return await knex('tb_users').select(['password', 'user_id']).where('username', '=', username).andWhere('user_status', '=', '1');
+    return await knex('tb_users').select(['password', 'user_id', 'username']).where('username', '=', username).andWhere('user_status', '=', '1');
 }
 
 const delete_user = async(userId)=>{
@@ -27,7 +27,7 @@ const getAllPasswords = async()=>{
 }
 
 const check_username_exists = async(username)=>{
-    return await knex('tb_users').select('user_status').where('username', '=', username).andWhere('user_status', '=', '1');
+    return await knex('tb_users').select('username').where('username', '=', username).andWhere('user_status', '=', '1');
 }
 
 const find_user_password = async(user_id)=>{

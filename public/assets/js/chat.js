@@ -1,18 +1,106 @@
 
+var titleArray = [];
+
 function addMessage(message, to_user_info) {
 
     const time = new Date(message.create_time);
+    const currentdate = new Date();
     var hours = time.getHours();
     var minutes = time.getMinutes();
+    var months = time.getMonth();
+    var days = time.getDate();
+
     if (minutes < 10) {
         minutes = '0' + minutes;
     }
-    if(hours < 10){
+    if (hours < 10) {
         hours = '0' + hours;
     }
-    var temp;
+    var temp = '';
+    var dayTitle = '';
+    // console.log('months='+months);
+    // console.log('days='+days);
+
+    if(months === currentdate.getMonth() && days === currentdate.getDate()){
+      
+        dayTitle+='Today';
+        // console.log(dayTitle);
+
+        if(!titleArray.includes(dayTitle)){
+   
+            temp +=`<li> 
+                       <div class="chat-day-title">
+                            <span class="title">${dayTitle}</span>
+                       </div>
+                     </li>`;
+            titleArray.push(dayTitle);
+        }
+
+    }
+    else if(months === currentdate.getMonth() && days < currentdate.getDate()){
+
+        dayTitle+=days+' ';
+        
+        switch(months){
+            case 0: dayTitle+='January'; break;
+            case 1: dayTitle+='February'; break;
+            case 2: dayTitle+='March'; break;
+            case 3: dayTitle+='April'; break;
+            case 4: dayTitle+='May'; break;
+            case 5: dayTitle+='June'; break;
+            case 6: dayTitle+='July'; break;
+            case 7: dayTitle+='August'; break;
+            case 8: dayTitle+='September'; break;
+            case 9: dayTitle+='Oktober'; break;
+            case 10: dayTitle+='November'; break;
+            case 11: dayTitle+='December'; break;
+        }
+
+        if(!titleArray.includes(dayTitle)){
+
+            temp +=`<li> 
+                         <div class="chat-day-title">
+                           <span class="title">${dayTitle}</span>
+                         </div>
+                    </li>`;
+            titleArray.push(dayTitle);
+
+        }
+    }
+    else if(months <= currentdate.getMonth()){
+        dayTitle+=days+' ';
+
+        switch(months){
+            case 0: dayTitle+='January'; break;
+            case 1: dayTitle+='February'; break;
+            case 2: dayTitle+='March'; break;
+            case 3: dayTitle+='April'; break;
+            case 4: dayTitle+='May'; break;
+            case 5: dayTitle+='June'; break;
+            case 6: dayTitle+='July'; break;
+            case 7: dayTitle+='August'; break;
+            case 8: dayTitle+='September'; break;
+            case 9: dayTitle+='Oktober'; break;
+            case 10: dayTitle+='November'; break;
+            case 11: dayTitle+='December'; break;
+        }
+
+        if(!titleArray.includes(dayTitle)){
+
+            temp +=`<li> 
+                         <div class="chat-day-title">
+                           <span class="title">${dayTitle}</span>
+                         </div>
+                    </li>`;
+            titleArray.push(dayTitle);
+
+        }
+
+    }
+
+
     if (message.from_user_id !== to_user_info.user_id) {
-        temp = ` <li class="right">
+        temp += ` <li class="right">
                         <div class="conversation-list">
                             <div class="ctext-wrap">
                                 <div class="ctext-wrap-content">
@@ -34,7 +122,7 @@ function addMessage(message, to_user_info) {
                         </div>
                 </li>`;
     } else {
-        temp = `<li >
+        temp += `<li >
                     <div class="conversation-list">
                         <div class="chat-avatar">
                             <img src="${to_user_info.profile_photo}" alt="avatar-2">
@@ -316,6 +404,8 @@ const start_chat = async (userId) => {
     document.getElementById('search').removeAttribute('hidden');
     document.getElementById('params').removeAttribute('hidden');
 
+
+    titleArray = [];
     myInterval = setInterval(async () => {
         await getMessages(userId);
         // console.log('log ishlavotti');
