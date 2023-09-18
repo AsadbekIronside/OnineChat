@@ -105,15 +105,15 @@ function addMessage(message, to_user_info) {
                             <div class="ctext-wrap">
                                 <div class="ctext-wrap-content">
                                     <p class="mb-0">${message.message}</p>
-                                 <div class="btn-group dropstart" style="position:absolute; rigtht:0; bottom:26px; margin-left:15px;">
-                                    <a class="dropdown-toggle" data-bs-toggle="dropdown" data-toggle="dropdown">
-                                    <i class="ri-more-2-fill ri-lg"></i>
-                                    </a>
-                                 <div class="dropdown-menu">
-                                     <a class="dropdown-item" href="#"><i class="ri-pencil-fill"></i></a>
-                                     <a class="dropdown-item" href="#"><i class="ri-delete-bin-7-fill"></i></a>
-                                 </div>
-                             </div>
+                                    <div class="btn-group dropstart" style="position:absolute; rigtht:0; bottom:26px; margin-left:15px;">
+                                            <a class="dropdown-toggle" data-bs-toggle="dropdown" data-toggle="dropdown">
+                                            <i class="ri-more-2-fill ri-lg"></i>
+                                            </a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="#"><i class="ri-pencil-fill"></i></a>
+                                            <a class="dropdown-item" href="#"><i class="ri-delete-bin-7-fill"></i></a>
+                                        </div>
+                                    </div>
                                 </div>
                                 <p class="chat-time mb-0"><i class="mdi mdi-clock-outline me-1"></i> ${hours}:${minutes}</p>
                                  
@@ -125,7 +125,7 @@ function addMessage(message, to_user_info) {
         temp += `<li >
                     <div class="conversation-list">
                         <div class="chat-avatar">
-                            <img src="${to_user_info.profile_photo}" alt="avatar-2">
+                            <img src="public/assets/uploadImages/${to_user_info.profile_photo}" alt="avatar-2">
                         </div>
                         <div class="ctext-wrap">
                             <div class="conversation-name">${to_user_info.account_name}</div>
@@ -222,7 +222,7 @@ const add_contacts = async (user) => {
                 <div class="card m-0">
                 <div class="row no-gutters align-items-center">
                     <div class="col-md-4">
-                    <img src="${user.profile_photo}" class="rounded-circle ms-3" style="height:80px;">
+                    <img src="public/assets/uploadImages/${user.profile_photo}" class="rounded-circle ms-3" style="height:80px;">
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
@@ -278,6 +278,9 @@ const start_new_chat = async (userId) => {
             <p class="card-text"><small class="text-primary">Active now</small></p>`;
 
     $('#cardBody').append(cardBody);
+
+    $('#toUserPhoto').html('');
+    $('#toUserPhoto').append(`<img class="card-img img-fluid rounded-circle img-thumbnail" src="public/assets/uploadImages/${response.profile_photo}" alt="Card image">`);
     
     document.getElementById('search').removeAttribute('hidden');
     document.getElementById('params').removeAttribute('hidden');
@@ -341,7 +344,7 @@ const add_chats = async (user) => {
         ` <a href="javascript:void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_chat(${user.user_id})" id="b${user.user_id}">
                 <div class="d-flex">
                     <div class="user-img away  align-self-center me-4 ">
-                        <img src="${user.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:50px;width:50px;">
+                        <img src="public/assets/uploadImages/${user.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:50px;width:50px;">
                     </div>
                     <div class="flex-1 overflow-hidden align-self-center">
                         <h5 class="text-truncate font-size-14 mb-1">${user.account_name}</h5>
@@ -399,7 +402,11 @@ const start_chat = async (userId) => {
             <p class="card-text ">@${response.username}</p>
             <p class="card-text"><small class="text-primary">Active now</small></p>`;
 
+    $('#cardBody').html('');
     $('#cardBody').append(cardBody);
+
+    $('#toUserPhoto').html('');
+    $('#toUserPhoto').append(`<img class="card-img img-fluid rounded-circle img-thumbnail" src="public/assets/uploadImages/${response.profile_photo}" alt="Card image">`);
     
     document.getElementById('search').removeAttribute('hidden');
     document.getElementById('params').removeAttribute('hidden');
@@ -474,7 +481,7 @@ const add_unreplied = async (user)=>{
     `<li id="c${user.user_id}">
         <a href="javascript:void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_unreplied_chat(${user.user_id})">
             <div class="d-flex">
-                <img src="${user.profile_photo}" class="me-3 rounded-circle avatar-xs" alt="user-pic">
+                <img src="public/assets/uploadImages/${user.profile_photo}" class="me-3 rounded-circle avatar-xs" alt="user-pic">
                 <div class="flex-1">
                     <h6 class="mt-0 mb-1">${user.account_name}</h6>
                     <div class="font-size-12 text-muted">
@@ -554,7 +561,7 @@ const show_user_profile = async()=>{
 
     let userProfile = 
     `   <div class="col-md-4">
-            <img class="card-img img-fluid rounded-circle img-thumbnail" src="${user.profile_photo}" alt="Card image">
+            <img class="card-img img-fluid rounded-circle img-thumbnail" src="public/assets/uploadImages/${user.profile_photo}" alt="Card image" id="userProf">
         </div>
         <div class="col-md-8">
             <div class="card-body">
@@ -574,4 +581,30 @@ const show_user_profile = async()=>{
     $('#currentName').html('');
     $('#currentName').append(currentName);
     $('#topRigthName').html(user.account_name);
+}
+
+
+/////update profile image
+
+const updatePhoto = async()=>{
+    // console.log('adfdsf');
+    var formData = new FormData();
+    var photo = document.getElementById('profilePhot').files[0];
+
+    if(!photo)
+        return;
+    // console.log('photo='+photo);
+    formData.append('photo', photo);
+
+    await fetch('/update-profile-photo', {
+        method:'POST',
+        body:formData
+    })
+    .then(response => response.json())
+    .then(response => {
+        document.getElementById('userProf').setAttribute('src', `public/assets/uploadImages/${response.result}`);
+        document.getElementById('topRightPhoto').setAttribute('src', `public/assets/uploadImages/${response.result}`);
+        document.getElementById('btnClosePhoto').click();
+    });
+
 }

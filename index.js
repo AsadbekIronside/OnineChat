@@ -57,11 +57,6 @@ app.use(expressLayouts);
   // Define All Route
 pageRouter(app); 
 
-io.on('connection', (socket)=>{
-  console.log('connected!');
-  socket.emit('get-message');
-});
-
 app.get('/', function (req, res) {
   res.redirect('/');
 });

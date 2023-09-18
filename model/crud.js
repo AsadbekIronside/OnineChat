@@ -74,6 +74,11 @@ const updateAccountName = async(id, name)=>{
     return await knex(users).update({account_name:name, update_time: new Date()}).where('user_id', '=', id);
 }
 
+const updateProfilePhoto = async(id, photo_name)=>{
+    await knex(users).update({profile_photo:photo_name, update_time:new Date()}).where('user_id', '=', id);
+}
+
+
 module.exports = {
     postMessages,
     getMessages,
@@ -84,6 +89,7 @@ module.exports = {
     getOnesTypedUser,
     getOnesUserTyped,
     getMessageById,
-    updateAccountName
+    updateAccountName,
+    updateProfilePhoto
 };
 

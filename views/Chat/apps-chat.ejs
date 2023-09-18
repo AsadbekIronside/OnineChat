@@ -70,7 +70,7 @@
                                 <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="mdi mdi-dots-horizontal"></i>
                                 </button>
-                                <div class="dropdown-menu dropdown-menu-end">
+                                <div class="dropdown-menu dropdown-menu-end" > 
                                     <a class="dropdown-item" href="#toUserProfile" data-bs-toggle="modal">View Profile</a>
                                     <a class="dropdown-item" href="javascript:void(0);" id="sa-params">Clear chat</a>
                                 </div>
@@ -112,7 +112,7 @@
 
 <div class="col-sm-6 col-md-4 col-xl-3">
     <!-- Modal user profile -->
-    <div class="modal fade" id="myModal" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="myModal" data-bs-keyboard="false" tabindex="0" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -127,16 +127,20 @@
                         </div>
                     </div>
             
-                    <form>
-                        <label class="dropdown-item" for="image">
-                            <i class="ri-image-add-fill align-middle me-1 ri-lg text-success"></i>Change Profile Photo
-                            <input type="file" id='image'name="profile_photo" accept="image/*" hidden>
-                        </label>    
-                    </form>
-                    <a href="#modalUsername" data-bs-toggle="modal" data-bs-target=".bs-example-modal-center" class="text-dark ms-4">
-                        <i class="ri-pencil-line align-middle me-1 ri-lg text-success"></i>
-                        <span>Change Name</span>
-                    </a>
+                    <div class="row">
+                        <div class="col-12">
+                            <a href="#modalProfilePhoto" data-bs-toggle="modal" data-bs-target="#modalProfilePhoto" class="text-dark ms-4">
+                                <i class="ri-image-add-fill align-middle me-1 ri-lg text-success"></i>
+                                <span>Change Profile Photo</span>
+                            </a>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <a href="#modalUsername" data-bs-toggle="modal" data-bs-target=".bs-example-modal-center" class="text-dark ms-4">
+                                <i class="ri-pencil-line align-middle me-1 ri-lg text-success"></i>
+                                <span>Change Name</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -176,8 +180,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="row no-gutters align-items-center border bg-white border-success">
-                            <div class="col-md-4">
-                                <img class="card-img img-fluid rounded-circle img-thumbnail" src=<%=profilePhoto%> alt="Card image">
+                            <div class="col-md-4 " id="toUserPhoto">
                             </div>
                             <div class="col-md-8">
                                 <div class="card-body" id="cardBody">
@@ -194,8 +197,9 @@
 </div>
 
 <div class="col-sm-4 col-md-2 col-xl-1">
-    
-    <div class="modal fade bs-example-modal-center" tabindex="-1" aria-labelledby="mySmallModalLabel" aria-hidden="true"
+
+    <!-- edit name -->
+    <div class="modal fade bs-example-modal-center" tabindex="-1"  aria-hidden="true"
      id="modalUsername" style="background-color: rgba(0, 0, 0, .5);">
         <div class="modal-dialog modal-dialog-centered" style="width: 15%;">
             <div class="modal-content">
@@ -214,6 +218,63 @@
         </div><!-- /.modal-dialog -->
     </div>
 
+    <!-- About -->
+    <div id="modalAbout" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title mt-0" id="myModalLabel">About</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        In this online chat you can communicate with people and create group as well as channels. This is totally free and there is not any adds, so 
+                        you can enjoy using this.
+                    </p>
+                    <div style="text-align: center;">
+                        <b style="font-size: larger; color: darkgreen">Developer:</b><br>
+                        <h4 style="text-align: center; font-family: 'Times New Roman', Times, serif;">Trichat team</h4>
+                    </div>
+                    <p>If you have any question or offer you can contact the following team members:</p>
+                    
+                    <ul class="list-unstyled" style="font-weight: bolder; color: brown;">
+                        <li>
+                            <div>
+                                <span style="color: black;">1: </span>
+                                Asadbek Shariyorov
+                           </div>
+                            <div>
+                                <span style="color: black;">Email: </span>
+                                 asadbekshariyorov@gmail.com
+                            </div>
+                            
+                        </li>
+                    </ul>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <!-- Chang profile photo -->
+
+    <div class="modal fade bs-example-modal-center" tabindex="-1"  aria-hidden="true"
+        id="modalProfilePhoto" style="background-color: rgba(0, 0, 0, .5);">
+        <div class="modal-dialog modal-dialog-centered" style="width: 15%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="btnClosePhoto" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                       <label for="profilePhoto">
+                        <input class="form-control" id="profilePhot" type="file" accept="image/*">
+                       </label>
+                       <button type="button" class="btn btn-sm btn-success" onclick="updatePhoto()">set</button>
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+   </div>
 </div>
 
 <%- contentFor('FooterJs') %>

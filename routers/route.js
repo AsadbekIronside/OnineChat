@@ -2,6 +2,18 @@ var app = require('express')();
 var bodyParser = require('body-parser');
 var urlencodeParser = bodyParser.urlencoded({ extended: false });
 var cors = require('cors');
+var path = require('path');
+var multer = require('multer');
+var storage = multer.diskStorage({
+      destination:(req, file, cb)=>{
+            cb(null, 'public/assets/uploadImages/')
+      },
+      filename:(req, file, cb)=>{
+            // console.log(file);
+            cb(null, Date.now()+ path.extname(file.originalname))
+      }
+});
+var upload = multer({storage:storage});
 
 app.use(urlencodeParser);
 app.use(bodyParser.json());
@@ -38,4 +50,6 @@ module.exports = function (app) {
 
       app.post('/update-user-name', isUserAllowed, mainController.update_account_name);
       app.get('/get-user-info', isUserAllowed, mainController.get_user_info);
+      app.post('/update-profile-photo', isUserAllowed, upload.single('photo'), mainController.update_profile_photo);
+      
 }

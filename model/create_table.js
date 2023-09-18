@@ -9,7 +9,7 @@ const create_users = async ()=>{
         table.string('password').notNullable();
         table.string('account_name').notNullable();
         table.tinyint('user_status').defaultTo(1);
-        table.string('profile_photo').defaultTo("public/assets/images/chat_photos/default_profile_photo.jpg");
+        table.string('profile_photo').defaultTo("default_profile_photo.jpg");
         table.timestamp('create_time').defaultTo(knex.fn.now());
         table.string('delete_time').nullable();
         table.string('update_time').nullable();

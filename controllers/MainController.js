@@ -1,5 +1,6 @@
+
 const { postMessages, getMessages, getUserContacts, getUserChats, getUser, clearChat,
-        getOnesTypedUser, getOnesUserTyped, getMessageById, updateAccountName} = require('../model/crud');
+        getOnesTypedUser, getOnesUserTyped, getMessageById, updateAccountName, updateProfilePhoto} = require('../model/crud');
 
 const get_main_page = async(req, res)=>{
     res.locals = { title: 'chat' };
@@ -120,6 +121,11 @@ const update_account_name = async(req, res)=>{
     res.json({ok:'ok', result:result});
 }
 
+const update_profile_photo = async(req, res)=>{
+    await updateProfilePhoto(req.session.user.user_id, req.file.filename);
+    res.json({ok:'ok', result:req.file.filename});
+}
+
 const get_user_info = async(req, res)=>{
     let userInfo = await getUser(req.session.user.user_id);
     res.json({ok:'ok', result:userInfo[0]})
@@ -136,5 +142,6 @@ module.exports = {
     clear_chat,
     get_unreplied,
     update_account_name,
-    get_user_info
+    get_user_info,
+    update_profile_photo
 }
