@@ -23,8 +23,6 @@
             <div class="" id="chat">
                 <div>
                     <h5 class="font-size-14 px-3 mb-3">Chats</h5>
-                    <!-- <ul class="list-unstyled chat-list" data-simplebar style="max-height: 500px;" id="chatsGroup">
-                    </ul> -->
                     <div class="list-group"  style="max-height: 500px;" id="chatsGroup">
                     </div>
                 </div>
@@ -70,7 +68,7 @@
                                 <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="mdi mdi-dots-horizontal"></i>
                                 </button>
-                                <div class="dropdown-menu dropdown-menu-end" > 
+                                <div class="dropdown-menu dropdown-menu-end" id="dropdownMenu"> 
                                     <a class="dropdown-item" href="#toUserProfile" data-bs-toggle="modal">View Profile</a>
                                     <a class="dropdown-item" href="javascript:void(0);" id="sa-params">Clear chat</a>
                                 </div>
@@ -93,16 +91,7 @@
         <div class="px-lg-3">
             <div class="p-3 chat-input-section">
                    <form>
-                    <div class="row">
-                        <div class="col">
-                            <div class="position-relative">
-                                <input id="message" name="message" type="text" class="form-control chat-input" placeholder="Enter Message...">
-                                
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <button type="button" id="send_button" class="btn btn-primary chat-send w-md waves-effect waves-light"><span class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send"></i></button>
-                        </div>
+                    <div class="row" id="enterMessage">
                     </div>
                    </form>
             </div>
@@ -291,7 +280,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="modal_close_group"></button>
             </div>
             <div class="modal-body" style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
-                <div class="list-group" id="modal_body_group">
+                <div class="list-group" id="groupsBody">
                 </div>
                 <hr>
                 <ul class="sub-menu list-unstyled mx-0" style="margin-bottom: 0px;" aria-expanded="false">             
@@ -301,10 +290,6 @@
                     </li>
                 </ul>
             </div>
-            <!-- <div class="modal-footer">
-                <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary waves-effect waves-light">Save changes</button>
-            </div> -->
         </div>
     </div>
 </div>
@@ -324,7 +309,7 @@
             <div class="modal-footer">
                 <button type="button" id="closeModalgr" class="btn btn-light waves-effect" style="border: 0px; color: darkred; font-weight: bolder;" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-light waves-effect waves-light"
-                style="border: 0px; color: darkgreen; font-weight: bolder;" onclick="selectContacts()">Next</button>
+                style="border: 0px; color: darkgreen; font-weight: bolder;" onclick="selectContacts()" id="nextBtn">Next</button>
             </div>
         </div>
     </div>
@@ -332,31 +317,83 @@
 
 <!-- select contacts -->
 <div class="modal fade" id="selectContacts" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document" style="width: 20%;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title" style="color: darkgreen;">All Users</h6>
-                <form class="app-search d-lg-block ms-1">
-                    <div class="position-relative">
-                        <input type="text" class="form-control" placeholder="<%=translation.Search%>" id="searchContact">
-                        <span class="ri-search-line"></span>
-                    </div>
-                </form>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="modal_close_contact"></button>
-            </div>
-            <div class="modal-body" style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
-                <div class="list-group" id="select_group_users">
+    <div class="row">
+        <div class="modal-dialog col-sm-6 col-lg-2 col-md-4 col-12" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" style="color: darkgreen;">All Users</h6>
+                    <form class="app-search d-lg-block ms-1">
+                        <div class="position-relative">
+                            <input type="text" class="form-control" placeholder="<%=translation.Search%>" id="searchContact">
+                            <span class="ri-search-line"></span>
+                        </div>
+                    </form>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="modal_close_contact"></button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="closeModalLast" class="btn btn-light waves-effect" style="border: 0px; color: darkred; font-weight: bolder;" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-light waves-effect waves-light"
-                style="border: 0px; color: darkgreen; font-weight: bolder;" onclick="createGroup()">Create</button>
+                <div class="modal-body" style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
+                    <div class="list-group" id="select_group_users">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="closeModalLast" class="btn btn-light waves-effect" style="border: 0px; color: darkred; font-weight: bolder;" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-light waves-effect waves-light"
+                    style="border: 0px; color: darkgreen; font-weight: bolder;" onclick="createGroup()" id="creategroup">Create</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- group profile -->
+
+<div class="modal fade" id="groupProfile" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" id="btnCloseGroupInfo" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                    <div class="card">
+                        <div class="row no-gutters align-items-center border bg-white p-2">
+                            <div class="col-md-4 " id="groupPhoto">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body" id="cardBodyGroup">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="col-12 mb-2 ms-2">
+                                <h6 class="mt-4">
+                                    <i class="ri-group-line ri-lg me-3 ms-2"></i> MEMBERS
+                                    <i class="bi bi-person-plus ri-lg" style="margin-left:60%;"></i>
+                                </h6>
+                            </div>
+                            <div class="list-group col-12"  style="max-height: 400px; overflow-y: scroll;" id="groupMembers">
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<div class="modal fade" id="groupMemberProfile" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" data-bs-target="#groupProfile" data-bs-toggle="modal" data-bs-dismiss="modal" style="border: 0px; background-color: white;"><i class="bi bi-arrow-left align-middle ri-2x" ></i></button>
+                <button type="button" id="btnCloseGroupMember" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                    <div class="card">
+                        <div class="row no-gutters align-items-center border bg-white p-2" id="otaDiv">                     
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </div>
 

@@ -82,10 +82,10 @@ File: Sweetalert Js File
 
                     if(val !== -1){
                         $('#messageList').html('');
-                        var child = document.getElementById('b'+val);
-                        document.getElementById('chatsGroup').removeChild(child);
-                        document.getElementById('search').setAttribute('hidden', true);
-                        document.getElementById('params').setAttribute('hidden', true);
+                        // // var child = document.getElementById('b'+val);
+                        // // document.getElementById('chatsGroup').removeChild(child);
+                        // document.getElementById('search').setAttribute('hidden', true);
+                        // document.getElementById('params').setAttribute('hidden', true);
                         $('#to_user').html('');
                         Swal.fire({
                             title: 'Deleted!',

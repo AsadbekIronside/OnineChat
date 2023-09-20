@@ -1,7 +1,7 @@
 
-const { postMessages, getMessages, getUserContacts, getUser, clearChat,
-    getOnesTypedUser, getOnesUserTyped, getMessageById, updateAccountName, updateProfilePhoto,
-    getAllUsers, createGroup } = require('../model/crud');
+const { postMessages, getMessages, getUser, clearChat, getOnesTypedUser, getOnesUserTyped, getMessageById,
+        updateAccountName, updateProfilePhoto, getAllUsers, createGroup, getMessagesUserRelated,
+        getAllGroups, getGroupById, getGroupMessages, postGroupMessages} = require('../model/crud');
 
 const get_main_page = async (req, res) => {
     res.locals = { title: 'chat' };
@@ -31,9 +31,46 @@ const get_messages = async (req, res) => {
 
 const get_contacts = async (req, res) => {
 
-    const contactsList = await getUserContacts(req.session.user.user_id);
+    try {
 
-    res.json({ contacts: contactsList });
+        let current_user = req.session.user.user_id;
+        let users = await getMessagesUserRelated(current_user);
+        var allUsers = await getAllUsers(current_user);
+
+        var mySet = new Set();
+        var userInfo;
+        var finalResult = [];
+
+        if(users.length === 0 )
+            return res.json({ contacts: allUsers });
+
+        // console.log(users);
+
+        for(let i=0; i < users.length; i++){
+            if(users[i].from_user_id === current_user)
+                mySet.add(users[i].to_user_id)
+            else 
+                mySet.add(users[i].from_user_id);
+        }
+        
+        // console.log('myset = '+mySet);
+
+        allUsers = allUsers.map(user => user.user_id);
+
+        for(let i=0; i < allUsers.length; i++){
+            if(!mySet.has(allUsers[i])){
+                userInfo = await getUser(allUsers[i]);
+                finalResult.push(userInfo[0]);
+            }
+        }
+        
+        // console.log('finalResult = '+finalResult);
+
+        res.json({ contacts: finalResult });
+        
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 const get_chats = async (req, res) => {
@@ -172,57 +209,63 @@ const clear_chat = async (req, res) => {
 
 const get_unreplied = async (req, res) => {
 
-    let user_id = req.session.user.user_id;
-    let userTypedList = await getOnesUserTyped(user_id);
-    let typedUserList = await getOnesTypedUser(user_id);
+    try {
 
-    var userTypedMap = new Map();
-    var typedUserMap = new Map();
+        let user_id = req.session.user.user_id;
+        let userTypedList = await getOnesUserTyped(user_id);
+        let typedUserList = await getOnesTypedUser(user_id);
 
-    userTypedList.forEach((element) => {
-        userTypedMap.set(element.to_user_id, element.message_id);   ///[2, 5], [5, 98]
-    });
+        var userTypedMap = new Map();
+        var typedUserMap = new Map();
 
-    typedUserList.forEach((element) => {
-        typedUserMap.set(element.from_user_id, element.message_id); ////[2, 9], [3, 87]
-    });
+        userTypedList.forEach((element) => {
+            userTypedMap.set(element.to_user_id, element.message_id);   ///[2, 5], [5, 98]
+        });
 
-    var resultUsers = [];
-    var resultMessages = [];
+        typedUserList.forEach((element) => {
+            typedUserMap.set(element.from_user_id, element.message_id); ////[2, 9], [3, 87]
+        });
 
-    Array.from(typedUserMap.keys()).forEach((el) => {
+        var resultUsers = [];
+        var resultMessages = [];
 
-        if (!userTypedMap.has(el) || (userTypedMap.get(el) < typedUserMap.get(el))) {
-            resultMessages.push(typedUserMap.get(el));
-            resultUsers.push(el);
+        Array.from(typedUserMap.keys()).forEach((el) => {
+
+            if (!userTypedMap.has(el) || (userTypedMap.get(el) < typedUserMap.get(el))) {
+                resultMessages.push(typedUserMap.get(el));
+                resultUsers.push(el);
+            }
+
+        });
+
+        var obj;
+        var finalResult = [];
+        var message;
+        var user;
+
+        for (let i = 0; i < resultUsers.length; i++) {
+
+            user = await getUser(resultUsers[i]);
+            message = await getMessageById(resultMessages[i]);
+
+            // console.log(user);
+            // console.log(message);
+            user = user[0];
+            message = message[0];
+
+            obj = {
+                user_id: user.user_id, username: user.username, account_name: user.account_name,
+                profile_photo: user.profile_photo, message: message.message, create_time: message.create_time
+            };
+            finalResult.push(obj);
+
         }
 
-    });
-
-    var obj;
-    var finalResult = [];
-    var message;
-    var user;
-
-    for (let i = 0; i < resultUsers.length; i++) {
-
-        user = await getUser(resultUsers[i]);
-        message = await getMessageById(resultMessages[i]);
-
-        // console.log(user);
-        // console.log(message);
-        user = user[0];
-        message = message[0];
-
-        obj = {
-            user_id: user.user_id, username: user.username, account_name: user.account_name,
-            profile_photo: user.profile_photo, message: message.message, create_time: message.create_time
-        };
-        finalResult.push(obj);
-
+        res.json({ result: finalResult });
+        
+    } catch (error) {
+        console.log(error);
     }
-
-    res.json({ result: finalResult });
 
 
 }
@@ -249,18 +292,139 @@ const get_all_users = async (req, res) => {
 
 const create_group = async (req, res) => {
     // console.log(req.body.data);
-    let data = {
-        name: req.body.data.name,
-        users: req.body.data.users,
-        owner: req.session.user.user_id
-    };
-    let datum = await createGroup(data);
-    if (datum)
-        res.json({ data: true });
-    else
-        res.json({ data: false });
+    try {
+
+        let data = {
+            name: req.body.data.name,
+            users: req.body.data.users,
+            owner: req.session.user.user_id
+        };
+        let datum = await createGroup(data);
+        if (datum)
+            res.json({ data: true });
+        else
+            res.json({ data: false });
+
+
+    } catch (error) {
+        console.log(error);
+    }
 }
 
+const get_groups = async (req, res) => {
+    
+    try {
+        let current_user = req.session.user.user_id;
+        let allGroups = await getAllGroups();
+        var finalResult = [];
+
+        // console.log(allGroups);
+
+        if(!allGroups || allGroups.length === 0)
+            return res.json({result: false});
+
+        allGroups.forEach((group)=>{
+            if(group.users.includes(current_user) || group.owner === current_user ){
+                finalResult.push(group);
+            }
+        });
+
+        res.json({result: finalResult});
+        // console.log(finalResult);
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const get_group_by_id = async (req, res)=>{
+
+    try {
+
+        let id = parseInt(req.query.id);
+        let groupInfo = await getGroupById(id);
+
+        if(!groupInfo[0])
+            return res.json({result: false});
+
+        res.json({result: groupInfo[0]});
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const get_group_members = async (req, res)=>{
+
+    try {
+        
+        let users = req.query.members;
+        let owner = parseInt(req.query.owner);
+        // console.log('owner = '+owner);
+        // console.log(users);
+    
+        let array = users.split(',');
+        var finalResult = [];
+        var userInfo;
+    
+        for(let i=0; i < array.length; i++){
+            userInfo = await getUser(array[i]);
+            finalResult.push(userInfo[0]);
+        }
+    
+        var ownerInfo = await getUser(owner);
+
+        // console.log('finalResult = '+finalResult);
+        // console.log('ownerInfo = '+ownerInfo);
+        
+        res.json({members: finalResult, owner:ownerInfo[0]});
+
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+
+const get_group_messages = async (req, res)=>{
+
+    try {
+        let count = parseInt(req.query.count);
+        let groupId = parseInt(req.query.id);
+        let result = await getGroupMessages(groupId, count);
+
+        // console.log('result = '+result);
+        if(!result || result.length === 0)
+            return res.json({result:false});
+        res.json({result:result, user_id:req.session.user.user_id});
+        
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+
+const post_group_messages  = async (req, res)=>{
+
+    try {
+
+        // console.log('req.body = '+req.body);
+        let user_id = req.session.user.user_id;
+        let message = req.body.message;
+        let groupId = req.body.groupId;
+    
+        let result = await postGroupMessages(user_id, groupId, message);
+    
+        if(!result)
+            return res.json({result:false});
+        
+        res.json({result:true});
+    
+        
+    } catch (error) {
+        console.log(error);
+    }
+
+}
 
 module.exports = {
     get_main_page,
@@ -275,5 +439,10 @@ module.exports = {
     get_user_info,
     update_profile_photo,
     get_all_users,
-    create_group
+    create_group,
+    get_groups,
+    get_group_by_id,
+    get_group_members,
+    get_group_messages,
+    post_group_messages
 }

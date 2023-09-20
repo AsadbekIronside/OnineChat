@@ -142,7 +142,7 @@ function addMessage(message, to_user_info) {
     $('#messageList').append(temp);
     scrollToBottom();
 }
-function sendMesssage() {
+function sendMessage() {
     const mess = document.getElementById('message').value;
     const toUserId = document.getElementById('userId').innerHTML;
     const time = new Date();
@@ -182,22 +182,6 @@ async function getMessages(to_user_id) {
         });
     }
 }
-
-document.getElementById('send_button').addEventListener('click', async () => {
-    sendMesssage();
-});
-
-// press enter
-
-const input = document.getElementById('message');
-
-input.addEventListener('keypress', (event) => {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        document.getElementById('send_button').click();
-    }
-});
-
 
 //scroll
 const scrollToBottom = () => {
@@ -242,9 +226,11 @@ const get_contacts = async () => {
     await fetch('/get-contacts')
         .then(response => response.json())
         .then(data => {
+            console.log('contacts'+ data);
             localStorage.removeItem('contacts');
             localStorage.setItem('contacts', JSON.stringify(data));
             data.contacts.forEach(user => add_contacts(user));
+            $('#modal_body_group').html('');
             $('#modal_body_group').append(result);
         });
 }
@@ -287,43 +273,84 @@ const start_new_chat = async (userId) => {
     document.getElementById('search').removeAttribute('hidden');
     document.getElementById('params').removeAttribute('hidden');
 
+    let chatTemp = 
+    ` <a class="dropdown-item" href="#toUserProfile" data-bs-toggle="modal">View Profile</a>
+      <a class="dropdown-item" href="javascript:void(0);" id="sa-params">Clear chat</a>`;
+
+    $('#dropdownMenu').html('');
+
+    $('#dropdownMenu').append(chatTemp);
+
     myInterval = setInterval(async () => {
         await getMessages(userId);
         // console.log('log ishlavotti');
     }, 800);
 
     document.querySelector('#modal_close_contact').click();
+    const contactTemp =
+    ` <a href="javascript:void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_chat(${response.user_id})" id="b${response.user_id}">
+            <div class="d-flex">
+                <div class="user-img away  align-self-center me-4 ">
+                    <img src="public/assets/uploadImages/${response.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:50px;width:50px;">
+                </div>
+                <div class="flex-1 overflow-hidden align-self-center">
+                    <h5 class="text-truncate font-size-14 mb-1">${response.account_name}</h5>
+                </div>
+            </div>
+       </a>`;
 
+    $('#chatsGroup').append(contactTemp);
+
+       ///enter messaage div
+    let enterMessage = 
+            `<div class="col">
+                <div class="position-relative">
+                    <input id="message" name="message" type="text" class="form-control chat-input" placeholder="Enter Message...">        
+                </div>
+            </div>
+            <div class="col-auto">
+                <button type="button" id="send_button" class="btn btn-primary chat-send w-md waves-effect waves-light" onclick="sendMessage()"><span class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send"></i></button>
+            </div>`;
+
+    $('#enterMessage').html('');
+    $('#enterMessage').append(enterMessage);
+
+    //press enter
+    document.getElementById('message').addEventListener('keypress', (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById('send_button').click();
+        }
+    });
 };
 
 
 
 ///// live search contacts
 
-document.getElementById('searchContact').addEventListener('keyup', () => {
+document.getElementById('searchContact').addEventListener('keyup', async() => {
 
     let val = document.getElementById('searchContact').value;
 
+    if(!val)
+        await get_contacts();
     // console.log('val = '+val);
 
     let contacts = localStorage.getItem('contacts');
     contacts = JSON.parse(contacts).contacts;
     // console.log(contacts);
-    contacts.forEach((user) => {
-
-        // console.log(typeof user);
-
-        // console.log();
-        if (user.username.toLowerCase().includes(val.toLowerCase())) {
-            console.log(user);
-            childNode = document.getElementById('a' + user.user_id);
+    for(let i=0; i < contacts.length; i++){
+        
+        if (!contacts[i].username.toLowerCase().includes(val.toLowerCase())) {
+            // console.log(user);
+            childNode = document.getElementById('a' + contacts[i].user_id);
             document.getElementById('modal_body_group').removeChild(childNode);
-            document.getElementById('modal_body_group').prepend(childNode);
+            contacts.splice(i, 1);
+            localStorage.removeItem('contacts');
+            localStorage.setItem('contacts', JSON.stringify({contacts: contacts}) );
         }
-    });
+    }
 });
-
-
 
 //// get chats
 
@@ -384,11 +411,13 @@ const get_chats = async () => {
         .then(data => {
             if(data.data){
                 // console.log(data);
-                localStorage.setItem('chats', JSON.stringify(data.chats))
+                localStorage.removeItem('chats');
+                localStorage.setItem('chats', JSON.stringify(data))
                 data.chats.forEach(user => {
                     // console.log(user);
                     add_chats(user);
                 });
+                $('#chatsGroup').html('');
                 $('#chatsGroup').append(resultChat);
             }
         });
@@ -402,7 +431,7 @@ $(document).ready(function () {
 
 var myInterval = setInterval(() => { }, 10000);
 
-const start_chat = async (userId) => {
+const start_chat = async (userId) => {  
 
     // console.log('This inside start_chat');
     count = 0;
@@ -437,6 +466,36 @@ const start_chat = async (userId) => {
     document.getElementById('search').removeAttribute('hidden');
     document.getElementById('params').removeAttribute('hidden');
 
+    let chatTemp = 
+    ` <a class="dropdown-item" href="#toUserProfile" data-bs-toggle="modal">View Profile</a>
+      <a class="dropdown-item" href="javascript:void(0);" id="sa-params">Clear chat</a>`;
+
+    $('#dropdownMenu').html('');
+    $('#dropdownMenu').append(chatTemp);
+
+    ///enter messaage div
+    let enterMessage = 
+            `<div class="col">
+                <div class="position-relative">
+                    <input id="message" name="message" type="text" class="form-control chat-input" placeholder="Enter Message...">        
+                </div>
+            </div>
+            <div class="col-auto">
+                <button type="button" id="send_button" class="btn btn-primary chat-send w-md waves-effect waves-light" onclick="sendMessage()"><span class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send"></i></button>
+            </div>`;
+
+    $('#enterMessage').html('');
+    $('#enterMessage').append(enterMessage);
+
+
+    ///keypress
+    document.getElementById('message').addEventListener('keypress', (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById('send_button').click();
+        }
+    });
+
 
     titleArray = [];
     myInterval = setInterval(async () => {
@@ -448,26 +507,28 @@ const start_chat = async (userId) => {
 
 ////  search chats
 
-document.getElementById('searchChats').addEventListener('keyup', () => {
+document.getElementById('searchChats').addEventListener('keyup', async() => {
     var val = document.getElementById('searchChats').value;
 
-    console.log('val = ' + val);
+    // console.log('val = ' + val);
+    if(!val)
+        await get_chats();
 
     let chats = localStorage.getItem('chats');
     chats = JSON.parse(chats).chats;
-    // console.log(contacts);
-    chats.forEach((user) => {
-
-        // console.log(typeof user);
-
-        // console.log();
-        if (user.username.toLowerCase().includes(val.toLowerCase())) {
+    // console.log(chats);
+ 
+    for(let i=0; i < chats.length; i++){
+        if (!chats[i].account_name.toLowerCase().includes(val.toLowerCase())) {
             // console.log(user);
-            childNode = document.getElementById('b' + user.user_id);
+            childNode = document.getElementById('b' + chats[i].user_id);
             document.getElementById('chatsGroup').removeChild(childNode);
-            document.getElementById('chatsGroup').prepend(childNode);
+            chats.splice(i, 1);
+            localStorage.removeItem('chats');
+            localStorage.setItem('chats', JSON.stringify({chats: chats}));
+
         }
-    });
+    }
 });
 
 
@@ -482,9 +543,6 @@ async function clearChat() {
 
     return response.ok.startsWith('ok') ? parseInt(response.result) : -1;
 }
-
-
-
 
 /////Notification
 
@@ -610,7 +668,6 @@ const show_user_profile = async () => {
     $('#topRigthName').html(user.account_name);
 }
 
-
 /////update profile image
 
 const updatePhoto = async () => {
@@ -635,7 +692,6 @@ const updatePhoto = async () => {
         });
 
 }
-
 
 //////groups
 
@@ -664,6 +720,13 @@ const selectContacts = async () => {
     }
 }
 
+document.getElementById('groupName').addEventListener('keypress', (event)=>{
+    if(event.key === 'Enter'){
+        event.preventDefault();
+        document.getElementById('nextBtn').click();
+    }
+})
+
 var resultAllUser;
 
 const getAllUsers = async () => {
@@ -687,10 +750,10 @@ const addAllUsers = (user) => {
         <input class="form-check-input" type="checkbox" id="formCheck${user.user_id}">
         <label class="form-check-label ms-2" for="formCheck${user.user_id}">
             <div class="d-flex">
-                <div class="user-img away  align-self-center me-4 ">
+                <div class="user-img away align-self-center me-4">
                     <img src="public/assets/uploadImages/${user.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:30px;width:30px;">
                 </div>
-                <div class="flex-1 align-self-center">
+                <div class="flex-1 align-self-center me-4">
                     <h5 class="text-truncate font-size-14 mb-1">${user.account_name}</h5>
                     <p class="text-truncate mb-0 text-primary">@${user.username}</p>
                 </div>
@@ -726,3 +789,406 @@ const createGroup = async () => {
     console.log("kelgan data ::", result3);
     document.getElementById('closeModalLast').click();
 }   
+var groupResult;
+
+const getGroups = async()=>{
+
+    groupResult = '';
+    const result = await fetch('/get-groups')
+    .then(response => response.json())
+    .then(response => response.result)
+    .catch(err => {console.log(err);});
+
+    if(!result){
+        console.log("groups: "+result);
+        return;
+    }
+
+    result.forEach((group)=>{
+        add_groups(group);
+    });
+
+    $('#groupsBody').html('');
+    $('#groupsBody').append(groupResult);
+
+}
+
+const add_groups = (group)=>{
+
+    const groupTemp =
+        `<a href="javascript: void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_new_group(${group.id})" 
+            id="g${group.id}">
+                <div class="card m-0">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col-md-4">
+                        <img src="public/assets/groupImages/${group.photo}" class="rounded-circle img-thumbnail ms-3" style="height:80px;">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                            <h6 class="fw-bolder">${group.name}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+         </a> `;
+
+    groupResult+=groupTemp;
+}
+
+var membersTemp;
+// var myInterval = setInterval(() => { }, 10000);
+
+const start_new_group = async(id)=>{
+
+    let group = await fetch('/get-group-info?id='+id)
+    .then(response => response.json())
+    .then(response => response.result)
+    .catch(err => console.log(err));
+
+    if(!group){
+        console.log('groupInfo = '+group);
+        return;
+    }
+    let users = group.users.split(',');
+
+    let groupProfile = 
+        `<h5 class="font-size-15 mb-1 text-truncate">${group.name}<p id="groupId" hidden>${group.id}</p></h5>
+        <p class="text-truncate mb-0">${users.length+1} members</p>`;
+
+    $('#to_user').html('');
+    $('#to_user').html(groupProfile);
+    document.getElementById('modal_close_group').click();
+    document.getElementById('params').removeAttribute('hidden');
+    document.getElementById('search').removeAttribute('hidden');
+
+    let menuTemp =
+    ` <a class="dropdown-item" href="#groupProfile" data-bs-toggle="modal"><i class="bi bi-info-circle align-middle fa-lg me-2"></i>View Group Info</a>
+      <a class="dropdown-item text-danger" href="javascript:void(0);" id="sa-params"><i class="bi bi-box-arrow-right align-middle fa-lg me-2"></i>Leave Group</a>`
+
+    $('#dropdownMenu').html('');
+
+    $('#dropdownMenu').append(menuTemp);
+
+    ////
+
+    const cardBody =
+        `<h6 class="card-text ">${group.name}</h6>
+         <p class="card-text ">${users.length+1} members</p>`;
+
+    $('#cardBodyGroup').html('');
+    $('#cardBodyGroup').append(cardBody);
+
+    $('#groupPhoto').html('');
+    $('#groupPhoto').append(`<img class="card-img img-fluid rounded-circle img-thumbnail" style="object-fit: cover;" src="public/assets/groupImages/${group.photo}" alt="Card image">`);
+
+
+    membersTemp='';
+
+    const response = await fetch('/get-group-members?members='+group.users+'&owner='+group.owner)
+    .then(response => response.json())
+    .then(response => response)
+    .catch(er => console.log(er));
+
+    const members = response.members;
+    const owner = response.owner;
+
+    // console.log('members = '+members);
+    // console.log('owner = '+owner);
+
+    if(!members){
+        console.log('members = '+members);
+        return;
+    }
+
+    membersTemp +=
+    `<a href="javascript:void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_chat(${owner.user_id})">
+        <div class="d-flex">
+            <div class="user-img away  align-self-center me-4 ">
+                <img src="public/assets/uploadImages/${owner.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:50px;width:50px;">
+            </div>
+            <div class="flex-1 overflow-hidden align-self-center">
+                <h5 class="text-truncate font-size-14 mb-1">${owner.account_name}</h5>
+            </div>
+            <div class="font-size-13 text-primary">Owner</div>
+        </div>
+      </a>`;
+    
+    members.forEach((user)=>{
+        // console.log('user = '+user);
+        add_members(user);
+    });
+
+    $('#groupMembers').html('');
+    $('#groupMembers').append(membersTemp);
+
+    ////set send button
+
+    let enterMessage = 
+            `<div class="col">
+                <div class="position-relative">
+                    <input id="messageGroup" name="message" type="text" class="form-control chat-input" placeholder="Enter Message...">        
+                </div>
+            </div>
+            <div class="col-auto">
+                <button type="button" id="messageGroup" class="btn btn-primary chat-send w-md waves-effect waves-light" onclick="send_group_messages()"><span class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send"></i></button>
+            </div>`;
+
+    $('#enterMessage').html('');
+    $('#enterMessage').append(enterMessage);
+
+    /////press enter
+    
+    document.getElementById('messageGroup').addEventListener('keypress', async(event)=>{
+        if(event.key === 'Enter'){
+            event.preventDefault();
+            await send_group_messages();
+        }
+    })
+
+    $('#messageList').html('');
+
+    // cursor
+
+    // $('#messageGroup').focus();
+
+    titleArray = [];
+
+    let grId = group.id;
+    countMessage = 0;
+    clearInterval(myInterval);
+    myInterval = setInterval(async()=>{
+        await get_group_messages(grId);
+    }, 1000);
+
+}
+
+const add_members = (user)=>{
+
+    var temp = 
+    ` <a href="#groupMemberProfile" data-bs-toggle="modal" class="list-group-item list-group-item-action fw-bolder" data-bs-dismiss="modal" onclick="show_member_profile(${user.user_id})">
+            <div class="d-flex">
+                <div class="user-img away  align-self-center me-4 ">
+                    <img src="public/assets/uploadImages/${user.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:50px;width:50px;">
+                </div>
+                <div class="flex-1 overflow-hidden align-self-center">
+                    <h5 class="text-truncate font-size-14 mb-1">${user.account_name}</h5>
+                </div>
+            </div>
+       </a>`;
+
+    membersTemp+=temp;
+}
+
+const show_member_profile = async(userId)=>{
+
+    let user = await fetch('/start-chat?userId=' + userId)
+    .then(response => response.json())
+    .catch(err => console.log(err));
+
+    let userProfile =
+        ` <div class="col-md-4">
+            <img class="card-img rounded-circle img-thumbnail" style="background-position: center; height: 100%; width: 100%; object-fit: cover;"
+            src="public/assets/uploadImages/${user.profile_photo}" alt="Card image" id="userProf">
+        </div>
+        <div class="col-md-8 mb-1">
+            <div class="card-body">
+                <h5 class="card-title fw-bolder">Name:</h5>
+                <h6 class="card-text " id="accountName">${user.account_name}</h6>
+                <h5 class="card-title fw-bolder">Username:</h5>
+                <p class="card-text ">@${user.username}</p>
+            </div>
+        </div>
+        <hr>
+        <div>
+            <a href="javascript:void(0);" data-bs-dismiss="modal" style="font-weight:bolder; margin-left:36%" onclick="start_chat(${user.user_id})">
+               SEND MESSAGE
+            </a>
+        </div>`;
+
+    $('#otaDiv').html('');
+    $('#otaDiv').html(userProfile);
+   
+}
+var countMessage = 0;
+const get_group_messages = async(groupId)=>{
+    
+    let messages = await fetch('/get-group-messages?id='+groupId+'&count='+countMessage)
+    .then(response => response.json())
+    .catch(err => console.log(err));
+
+    if(!messages.result){
+        console.log('messages = '+messages);
+        return;
+    }
+    countMessage = messages.result[messages.result.length-1].id;
+
+    messages.result.forEach((message)=>{
+        add_group_messages(message, messages.user_id);
+    });
+
+}
+
+const add_group_messages = (message, current_user_id)=>{
+
+    const time = new Date(message.create_time);
+    const currentdate = new Date();
+    var hours = time.getHours();
+    var minutes = time.getMinutes();
+    var months = time.getMonth();
+    var days = time.getDate();
+
+    if (minutes < 10) {
+        minutes = '0' + minutes;
+    }
+    if (hours < 10) {
+        hours = '0' + hours;
+    }
+    var temp = '';
+    var dayTitle = '';
+
+    if (months === currentdate.getMonth() && days === currentdate.getDate()) {
+
+        dayTitle += 'Today';
+        // console.log(dayTitle);
+
+        if (!titleArray.includes(dayTitle)) {
+
+            temp += `<li> 
+                       <div class="chat-day-title">
+                            <span class="title">${dayTitle}</span>
+                       </div>
+                     </li>`;
+            titleArray.push(dayTitle);
+        }
+
+    }
+    else if (months === currentdate.getMonth() && days < currentdate.getDate()) {
+
+        dayTitle += days + ' ';
+
+        switch (months) {
+            case 0: dayTitle += 'January'; break;
+            case 1: dayTitle += 'February'; break;
+            case 2: dayTitle += 'March'; break;
+            case 3: dayTitle += 'April'; break;
+            case 4: dayTitle += 'May'; break;
+            case 5: dayTitle += 'June'; break;
+            case 6: dayTitle += 'July'; break;
+            case 7: dayTitle += 'August'; break;
+            case 8: dayTitle += 'September'; break;
+            case 9: dayTitle += 'Oktober'; break;
+            case 10: dayTitle += 'November'; break;
+            case 11: dayTitle += 'December'; break;
+        }
+
+        if (!titleArray.includes(dayTitle)) {
+
+            temp += `<li> 
+                         <div class="chat-day-title">
+                           <span class="title">${dayTitle}</span>
+                         </div>
+                    </li>`;
+            titleArray.push(dayTitle);
+
+        }
+    }
+    else if (months <= currentdate.getMonth()) {
+        dayTitle += days + ' ';
+
+        switch (months) {
+            case 0: dayTitle += 'January'; break;
+            case 1: dayTitle += 'February'; break;
+            case 2: dayTitle += 'March'; break;
+            case 3: dayTitle += 'April'; break;
+            case 4: dayTitle += 'May'; break;
+            case 5: dayTitle += 'June'; break;
+            case 6: dayTitle += 'July'; break;
+            case 7: dayTitle += 'August'; break;
+            case 8: dayTitle += 'September'; break;
+            case 9: dayTitle += 'Oktober'; break;
+            case 10: dayTitle += 'November'; break;
+            case 11: dayTitle += 'December'; break;
+        }
+
+        if (!titleArray.includes(dayTitle)) {
+
+            temp += `<li> 
+                         <div class="chat-day-title">
+                           <span class="title">${dayTitle}</span>
+                         </div>
+                    </li>`;
+            titleArray.push(dayTitle);
+
+        }
+
+    }
+
+    // console.log('message.user = '+ message.user);
+    // console.log(current_user_id);
+
+    if (message.user_id === current_user_id) {
+        temp += ` <li class="right">
+                        <div class="conversation-list">
+                            <div class="ctext-wrap">
+                                <div class="ctext-wrap-content">
+                                    <p class="mb-0">${message.message}</p>
+                                    <div class="btn-group dropstart" style="position:absolute; rigtht:0; bottom:26px; margin-left:15px;">
+                                            <a class="dropdown-toggle" data-bs-toggle="dropdown" data-toggle="dropdown">
+                                            <i class="ri-more-2-fill ri-lg"></i>
+                                            </a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="#"><i class="ri-pencil-fill"></i></a>
+                                            <a class="dropdown-item" href="#"><i class="ri-delete-bin-7-fill"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="chat-time mb-0"><i class="mdi mdi-clock-outline me-1"></i> ${hours}:${minutes}</p>
+                                 
+                            </div>
+                            
+                        </div>
+                </li>`;
+    } else {
+        temp += `<li >
+                    <div class="conversation-list">
+                        <div class="chat-avatar">
+                            <img src="public/assets/uploadImages/${message.profile_photo}" alt="avatar-2">
+                        </div>
+                        <div class="ctext-wrap">
+                            <div class="conversation-name">${message.account_name}</div>
+                            <div class="ctext-wrap-content">
+                                <p class="mb-0">${message.message}</p>
+                            </div>
+                            <p class="chat-time mb-0"><i class="mdi mdi-clock-outline me-1"></i>${hours}:${minutes}</p>
+                        </div>
+                        
+                    </div>
+                </li>`
+    }
+
+    $('#messageList').append(temp);
+    scrollToBottom();
+
+}
+
+const send_group_messages = async()=>{
+
+    let groupId = parseInt(document.getElementById('groupId').innerHTML);
+    console.log(groupId);
+    let message = document.getElementById('messageGroup').value;
+    document.getElementById('messageGroup').value = '';
+    
+    let response = await fetch('/post-group-messages', {
+        method:'POST',
+        headers:{"Content-Type": "application/json"},
+        body:JSON.stringify({message:message, groupId:groupId})
+    })
+    .then(response => response.json())
+    .then(response => response.result)
+    .catch(err => console.log(err));
+
+    if(!response){
+        console.log('Unsuccessful post');
+        return;
+    }
+}

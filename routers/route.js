@@ -54,5 +54,14 @@ module.exports = function (app) {
 
       app.get('/all-users', isUserAllowed, mainController.get_all_users);
       app.post('/create-group', isUserAllowed, mainController.create_group);
+      app.get('/get-groups', isUserAllowed, mainController.get_groups);
+      app.get('/get-group-info', isUserAllowed, mainController.get_group_by_id);
+      app.get('/get-group-members', isUserAllowed, mainController.get_group_members);
+
+      /////group messages
+
+      app.get('/get-group-messages', isUserAllowed, mainController.get_group_messages);
+      app.post('/post-group-messages', isUserAllowed, mainController.post_group_messages);
+
       
 }

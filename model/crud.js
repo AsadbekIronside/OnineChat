@@ -20,28 +20,14 @@ const getMessages = async (count, from_user_id, to_user_id) => {
         .orderBy('create_time');
 }
 
-const getUserContacts = async (current_user_id) => {
+const getMessagesUserRelated = async (current_user_id) => {
 
-    return await knex(users).select(['user_id', 'username', 'account_name', 'profile_photo'])
-        .where('user_status', '=', '1')
-        .andWhere('user_id', '<>', current_user_id)
-        .where(knex.raw(`user_id NOT IN (SELECT from_user_id FROM tb_messages WHERE to_user_id=${current_user_id} AND message_status=1)`));
+    return await knex(messages).select(['from_user_id', 'to_user_id'])
+       .where('message_status', '=', '1')
+       .andWhere('from_user_id', '=', current_user_id)
+       .orWhere('to_user_id', '=', current_user_id);
 
 }
-
-// const getUserChats = async (current_user_id) => {
-
-//     await knex.schema.dropViewIfExists('users');
-//     let create_view =
-//        `CREATE VIEW users AS SELECT message_id, from_user_id, to_user_id, message, create_time FROM tb_messages 
-//         WHERE message_status=1 AND message_id IN (SELECT MAX(message_id) FROM tb_messages WHERE to_user_id=
-//         ${current_user_id} OR from_user_id=${current_user_id} GROUP BY from_user_id)`;
-
-//     await knex.raw(create_view);
-//     return knex.select(['user_id', 'username', 'account_name', 'profile_photo', 'to_user_id', 'message', 'users.create_time AS create_time'])
-//         .from(users).innerJoin('users', 'tb_users.user_id', 'users.from_user_id').where('tb_users.user_status', '=', '1');
-
-// }
 
 const getUser = async (user_id) => {
     return await knex(users).select(['user_id', 'username', 'account_name', 'profile_photo'])
@@ -86,6 +72,8 @@ const getAllUsers = async (user_id) => {
         .where('user_status', '=', '1').andWhere('user_id', '<>', user_id);
 }
 
+//groups 
+
 const createGroup = async (group) => {
     return await knex(groups)
         .insert({
@@ -104,12 +92,65 @@ const createGroup = async (group) => {
 
 }
 
+const getAllGroups = async ()=>{
+    return await knex(groups).select(['id', 'name', 'users', 'owner', 'admins', 'photo'])
+    .where('status', '=', '1')
+    .then(result=>{
+        return result;  
+    })
+    .catch(err => {
+        return false;
+    });
+}
+
+const getGroupById = async (id)=>{
+    return await knex(groups).select(['id','name', 'owner', 'users', 'admins', 'photo'])
+    .where('id', '=', id)
+    .then(result =>{
+        return result;
+    })
+    .catch(err => {
+        console.log(err);
+        return false;
+    });
+}
+
+const getGroupMessages = async(id, count)=>{
+    return await knex(users).select([ 'user_id', 'username', 'account_name', 'profile_photo', 'id', 'message', 'tb_group_messages.create_time'])
+    .innerJoin(groupMessages, 'tb_group_messages.user', 'tb_users.user_id')
+    .where('group', '=', id)
+    .andWhere('user_status', '=', '1')
+    .andWhere('id', '>', count)
+    .then(result => {
+        return result;
+    })
+    .catch(err => {
+        console.log(err);
+        return false;
+    });
+}
+
+const postGroupMessages = async(user, group, message)=>{
+    return await knex(groupMessages).insert({
+        user:user,
+        group:group,
+        message:message,
+        create_time: new Date()
+    })
+    .then(result =>{
+        return result;
+    })
+    .catch(err => {
+        console.log(err);
+        return false;
+    });
+        
+}
 
 module.exports = {
     postMessages,
     getMessages,
-    getUserContacts,
-    // getUserChats,
+    getMessagesUserRelated,
     getUser,
     clearChat,
     getOnesTypedUser,
@@ -118,6 +159,10 @@ module.exports = {
     updateAccountName,
     updateProfilePhoto,
     getAllUsers,
-    createGroup
+    createGroup,
+    getAllGroups,
+    getGroupById,
+    getGroupMessages,
+    postGroupMessages
 };
 
