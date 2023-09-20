@@ -21,14 +21,14 @@ function addMessage(message, to_user_info) {
     // console.log('months='+months);
     // console.log('days='+days);
 
-    if(months === currentdate.getMonth() && days === currentdate.getDate()){
-      
-        dayTitle+='Today';
+    if (months === currentdate.getMonth() && days === currentdate.getDate()) {
+
+        dayTitle += 'Today';
         // console.log(dayTitle);
 
-        if(!titleArray.includes(dayTitle)){
-   
-            temp +=`<li> 
+        if (!titleArray.includes(dayTitle)) {
+
+            temp += `<li> 
                        <div class="chat-day-title">
                             <span class="title">${dayTitle}</span>
                        </div>
@@ -37,28 +37,28 @@ function addMessage(message, to_user_info) {
         }
 
     }
-    else if(months === currentdate.getMonth() && days < currentdate.getDate()){
+    else if (months === currentdate.getMonth() && days < currentdate.getDate()) {
 
-        dayTitle+=days+' ';
-        
-        switch(months){
-            case 0: dayTitle+='January'; break;
-            case 1: dayTitle+='February'; break;
-            case 2: dayTitle+='March'; break;
-            case 3: dayTitle+='April'; break;
-            case 4: dayTitle+='May'; break;
-            case 5: dayTitle+='June'; break;
-            case 6: dayTitle+='July'; break;
-            case 7: dayTitle+='August'; break;
-            case 8: dayTitle+='September'; break;
-            case 9: dayTitle+='Oktober'; break;
-            case 10: dayTitle+='November'; break;
-            case 11: dayTitle+='December'; break;
+        dayTitle += days + ' ';
+
+        switch (months) {
+            case 0: dayTitle += 'January'; break;
+            case 1: dayTitle += 'February'; break;
+            case 2: dayTitle += 'March'; break;
+            case 3: dayTitle += 'April'; break;
+            case 4: dayTitle += 'May'; break;
+            case 5: dayTitle += 'June'; break;
+            case 6: dayTitle += 'July'; break;
+            case 7: dayTitle += 'August'; break;
+            case 8: dayTitle += 'September'; break;
+            case 9: dayTitle += 'Oktober'; break;
+            case 10: dayTitle += 'November'; break;
+            case 11: dayTitle += 'December'; break;
         }
 
-        if(!titleArray.includes(dayTitle)){
+        if (!titleArray.includes(dayTitle)) {
 
-            temp +=`<li> 
+            temp += `<li> 
                          <div class="chat-day-title">
                            <span class="title">${dayTitle}</span>
                          </div>
@@ -67,27 +67,27 @@ function addMessage(message, to_user_info) {
 
         }
     }
-    else if(months <= currentdate.getMonth()){
-        dayTitle+=days+' ';
+    else if (months <= currentdate.getMonth()) {
+        dayTitle += days + ' ';
 
-        switch(months){
-            case 0: dayTitle+='January'; break;
-            case 1: dayTitle+='February'; break;
-            case 2: dayTitle+='March'; break;
-            case 3: dayTitle+='April'; break;
-            case 4: dayTitle+='May'; break;
-            case 5: dayTitle+='June'; break;
-            case 6: dayTitle+='July'; break;
-            case 7: dayTitle+='August'; break;
-            case 8: dayTitle+='September'; break;
-            case 9: dayTitle+='Oktober'; break;
-            case 10: dayTitle+='November'; break;
-            case 11: dayTitle+='December'; break;
+        switch (months) {
+            case 0: dayTitle += 'January'; break;
+            case 1: dayTitle += 'February'; break;
+            case 2: dayTitle += 'March'; break;
+            case 3: dayTitle += 'April'; break;
+            case 4: dayTitle += 'May'; break;
+            case 5: dayTitle += 'June'; break;
+            case 6: dayTitle += 'July'; break;
+            case 7: dayTitle += 'August'; break;
+            case 8: dayTitle += 'September'; break;
+            case 9: dayTitle += 'Oktober'; break;
+            case 10: dayTitle += 'November'; break;
+            case 11: dayTitle += 'December'; break;
         }
 
-        if(!titleArray.includes(dayTitle)){
+        if (!titleArray.includes(dayTitle)) {
 
-            temp +=`<li> 
+            temp += `<li> 
                          <div class="chat-day-title">
                            <span class="title">${dayTitle}</span>
                          </div>
@@ -152,7 +152,7 @@ function sendMesssage() {
     if (!mess)
         return;
 
-        fetch('/post-messages', {
+    fetch('/post-messages', {
         method: "POST",
         mode: "cors",
         headers: { "Content-type": "application/json; charset=UTF-8" },
@@ -177,13 +177,13 @@ async function getMessages(to_user_id) {
     if (messageList.length > 0) {
         count = messageList[messageList.length - 1].message_id;
         // console.log('zzzzzzzzzzzzzzzzzzzzz=' + count);
-        messageList.forEach((element)=>{
+        messageList.forEach((element) => {
             addMessage(element, to_user_info);
         });
     }
 }
 
-document.getElementById('send_button').addEventListener('click', async() => {
+document.getElementById('send_button').addEventListener('click', async () => {
     sendMesssage();
 });
 
@@ -259,7 +259,7 @@ const start_new_chat = async (userId) => {
 
     const response = await fetch('/start-chat?userId=' + userId)
         .then(response => response.json());
-        
+
     const toUser = $('#to_user');
     toUser.html('');
 
@@ -280,8 +280,10 @@ const start_new_chat = async (userId) => {
     $('#cardBody').append(cardBody);
 
     $('#toUserPhoto').html('');
-    $('#toUserPhoto').append(`<img class="card-img img-fluid rounded-circle img-thumbnail" src="public/assets/uploadImages/${response.profile_photo}" alt="Card image">`);
-    
+    $('#toUserPhoto').append(`<img class="card-img img-fluid rounded-circle img-thumbnail" 
+    style="background-position: center; height: 100%; width: 100%; object-fit: cover;"
+     src="public/assets/uploadImages/${response.profile_photo}" alt="Card image">`);
+
     document.getElementById('search').removeAttribute('hidden');
     document.getElementById('params').removeAttribute('hidden');
 
@@ -291,14 +293,14 @@ const start_new_chat = async (userId) => {
     }, 800);
 
     document.querySelector('#modal_close_contact').click();
-    
+
 };
 
 
 
 ///// live search contacts
 
-document.getElementById('searchContact').addEventListener('keyup', ()=>{
+document.getElementById('searchContact').addEventListener('keyup', () => {
 
     let val = document.getElementById('searchContact').value;
 
@@ -307,14 +309,14 @@ document.getElementById('searchContact').addEventListener('keyup', ()=>{
     let contacts = localStorage.getItem('contacts');
     contacts = JSON.parse(contacts).contacts;
     // console.log(contacts);
-    contacts.forEach((user)=>{
+    contacts.forEach((user) => {
 
         // console.log(typeof user);
 
         // console.log();
-        if(user.username.toLowerCase().includes(val.toLowerCase())){
+        if (user.username.toLowerCase().includes(val.toLowerCase())) {
             console.log(user);
-            childNode = document.getElementById('a'+user.user_id);
+            childNode = document.getElementById('a' + user.user_id);
             document.getElementById('modal_body_group').removeChild(childNode);
             document.getElementById('modal_body_group').prepend(childNode);
         }
@@ -332,7 +334,7 @@ const add_chats = async (user) => {
     var now = new Date();
     var time = new Date(user.create_time);
     var resultTime;
-    console.log(user);
+    // console.log(user);
     if (now.getDate() - time.getDate() > 0)
         resultTime = now.getDate() - time.getDate() + '  days ago';
     else if (now.getHours() - time.getHours() > 0)
@@ -340,7 +342,9 @@ const add_chats = async (user) => {
     else
         resultTime = now.getMinutes() - time.getMinutes() + ' minutes ago';
 
-    const contactTemp =
+    if(user.message){
+
+        var contactTemp =
         ` <a href="javascript:void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_chat(${user.user_id})" id="b${user.user_id}">
                 <div class="d-flex">
                     <div class="user-img away  align-self-center me-4 ">
@@ -354,6 +358,22 @@ const add_chats = async (user) => {
                 </div>
            </a>`;
 
+    }else{
+
+        var contactTemp =
+        ` <a href="javascript:void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_chat(${user.user_id})" id="b${user.user_id}">
+                <div class="d-flex">
+                    <div class="user-img away  align-self-center me-4 ">
+                        <img src="public/assets/uploadImages/${user.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:50px;width:50px;">
+                    </div>
+                    <div class="flex-1 overflow-hidden align-self-center">
+                        <h5 class="text-truncate font-size-14 mb-1">${user.account_name}</h5>
+                    </div>
+                </div>
+           </a>`;
+
+    }
+
     resultChat += contactTemp;
 }
 
@@ -362,9 +382,15 @@ const get_chats = async () => {
     await fetch('/get-chats')
         .then(response => response.json())
         .then(data => {
-            localStorage.setItem('chats', JSON.stringify(data))
-            data.chats.forEach(user => add_chats(user));
-            $('#chatsGroup').append(resultChat);
+            if(data.data){
+                // console.log(data);
+                localStorage.setItem('chats', JSON.stringify(data.chats))
+                data.chats.forEach(user => {
+                    // console.log(user);
+                    add_chats(user);
+                });
+                $('#chatsGroup').append(resultChat);
+            }
         });
 }
 
@@ -384,7 +410,7 @@ const start_chat = async (userId) => {
 
     const response = await fetch('/start-chat?userId=' + userId)
         .then(response => response.json());
-        
+
     const toUser = $('#to_user');
     toUser.html('');
 
@@ -406,8 +432,8 @@ const start_chat = async (userId) => {
     $('#cardBody').append(cardBody);
 
     $('#toUserPhoto').html('');
-    $('#toUserPhoto').append(`<img class="card-img img-fluid rounded-circle img-thumbnail" src="public/assets/uploadImages/${response.profile_photo}" alt="Card image">`);
-    
+    $('#toUserPhoto').append(`<img class="card-img img-fluid rounded-circle img-thumbnail" style="object-fit: cover;" src="public/assets/uploadImages/${response.profile_photo}" alt="Card image">`);
+
     document.getElementById('search').removeAttribute('hidden');
     document.getElementById('params').removeAttribute('hidden');
 
@@ -422,22 +448,22 @@ const start_chat = async (userId) => {
 
 ////  search chats
 
-document.getElementById('searchChats').addEventListener('keyup', ()=>{
+document.getElementById('searchChats').addEventListener('keyup', () => {
     var val = document.getElementById('searchChats').value;
 
-    console.log('val = '+val);
+    console.log('val = ' + val);
 
     let chats = localStorage.getItem('chats');
     chats = JSON.parse(chats).chats;
     // console.log(contacts);
-    chats.forEach((user)=>{
+    chats.forEach((user) => {
 
         // console.log(typeof user);
 
         // console.log();
-        if(user.username.toLowerCase().includes(val.toLowerCase())){
+        if (user.username.toLowerCase().includes(val.toLowerCase())) {
             // console.log(user);
-            childNode = document.getElementById('b'+user.user_id);
+            childNode = document.getElementById('b' + user.user_id);
             document.getElementById('chatsGroup').removeChild(childNode);
             document.getElementById('chatsGroup').prepend(childNode);
         }
@@ -447,12 +473,12 @@ document.getElementById('searchChats').addEventListener('keyup', ()=>{
 
 //alerts
 
-async function clearChat(){
+async function clearChat() {
 
     const to_user_id = document.getElementById('userId').innerHTML;
-    
-    const response = await fetch('/clear-chat?userId='+to_user_id)
-    .then(response => response.json());
+
+    const response = await fetch('/clear-chat?userId=' + to_user_id)
+        .then(response => response.json());
 
     return response.ok.startsWith('ok') ? parseInt(response.result) : -1;
 }
@@ -464,7 +490,7 @@ async function clearChat(){
 
 var resultUnrep;
 
-const add_unreplied = async (user)=>{
+const add_unreplied = async (user) => {
 
     var now = new Date();
     var time = new Date(user.create_time);
@@ -476,9 +502,9 @@ const add_unreplied = async (user)=>{
         resultTime = now.getHours() - time.getHours() + ' hours ago';
     else
         resultTime = now.getMinutes() - time.getMinutes() + ' minutes ago';
-    
+
     var unrepliedTemp =
-    `<li id="c${user.user_id}">
+        `<li id="c${user.user_id}">
         <a href="javascript:void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_unreplied_chat(${user.user_id})">
             <div class="d-flex">
                 <img src="public/assets/uploadImages/${user.profile_photo}" class="me-3 rounded-circle avatar-xs" alt="user-pic">
@@ -493,7 +519,7 @@ const add_unreplied = async (user)=>{
         </a>
      </li>`;
 
-     resultUnrep+=unrepliedTemp;
+    resultUnrep += unrepliedTemp;
 
 }
 
@@ -507,22 +533,22 @@ const get_unreplied = async () => {
             data.result.forEach(user => add_unreplied(user));
             $('#notifGroup').append(resultUnrep);
 
-            if(data.result.length>0){
+            if (data.result.length > 0) {
                 document.querySelector('.noti-dot').removeAttribute('hidden');
-            }else{
+            } else {
                 document.querySelector('.noti-dot').setAttribute('hidden', true);
             }
         });
 }
 
-$(document).ready(async()=>{
-   await get_unreplied();
+$(document).ready(async () => {
+    await get_unreplied();
 });
 
-const start_unreplied_chat = async(userId)=>{
+const start_unreplied_chat = async (userId) => {
     await start_chat(userId);
 
-    var child = document.getElementById('c'+userId);
+    var child = document.getElementById('c' + userId);
     var fatherDiv = document.getElementById('notifGroup');
     fatherDiv.removeChild(child);
 
@@ -535,17 +561,17 @@ const start_unreplied_chat = async(userId)=>{
 ////////////////////save account_name
 
 
-document.getElementById('saveName').addEventListener('click', async()=>{
+document.getElementById('saveName').addEventListener('click', async () => {
     let val = document.getElementById('newName').value;
-    document.getElementById('newName').value='';
+    document.getElementById('newName').value = '';
     // console.log('value='+val);
-    if(val){
+    if (val) {
         await fetch('/update-user-name', {
-            method:'POST',
-            mode:'cors',
-            headers:{"Content-type":"application/json; charset=UTF-8"},
-            body:JSON.stringify({name:val})
-        }).then(response=>response.json());
+            method: 'POST',
+            mode: 'cors',
+            headers: { "Content-type": "application/json; charset=UTF-8" },
+            body: JSON.stringify({ name: val })
+        }).then(response => response.json());
         document.getElementById('accountName').innerHTML = val;
         document.getElementById('topRigthName').innerHTML = val;
     }
@@ -553,15 +579,16 @@ document.getElementById('saveName').addEventListener('click', async()=>{
 
 /////
 
-const show_user_profile = async()=>{
+const show_user_profile = async () => {
 
     let user = await fetch('get-user-info')
-    .then(response => response.json())
-    .then(response => response.result );
+        .then(response => response.json())
+        .then(response => response.result);
 
-    let userProfile = 
-    `   <div class="col-md-4">
-            <img class="card-img img-fluid rounded-circle img-thumbnail" src="public/assets/uploadImages/${user.profile_photo}" alt="Card image" id="userProf">
+    let userProfile =
+        ` <div class="col-md-4">
+            <img class="card-img rounded-circle img-thumbnail" style="background-position: center; height: 100%; width: 100%; object-fit: cover;"
+            src="public/assets/uploadImages/${user.profile_photo}" alt="Card image" id="userProf">
         </div>
         <div class="col-md-8">
             <div class="card-body">
@@ -573,9 +600,9 @@ const show_user_profile = async()=>{
             </div>
         </div>`;
 
-    let currentName = 
-    `Current Name:<input type="text" class="form-control" value="${user.account_name}" style="width: 60%;" readonly>`
-       
+    let currentName =
+        `Current Name:<input type="text" class="form-control" value="${user.account_name}" style="width: 60%;" readonly>`
+
     $('#userProfileCard').html('');
     $('#userProfileCard').append(userProfile);
     $('#currentName').html('');
@@ -586,25 +613,116 @@ const show_user_profile = async()=>{
 
 /////update profile image
 
-const updatePhoto = async()=>{
+const updatePhoto = async () => {
     // console.log('adfdsf');
     var formData = new FormData();
     var photo = document.getElementById('profilePhot').files[0];
 
-    if(!photo)
+    if (!photo)
         return;
     // console.log('photo='+photo);
     formData.append('photo', photo);
 
     await fetch('/update-profile-photo', {
-        method:'POST',
-        body:formData
+        method: 'POST',
+        body: formData
     })
-    .then(response => response.json())
-    .then(response => {
-        document.getElementById('userProf').setAttribute('src', `public/assets/uploadImages/${response.result}`);
-        document.getElementById('topRightPhoto').setAttribute('src', `public/assets/uploadImages/${response.result}`);
-        document.getElementById('btnClosePhoto').click();
-    });
+        .then(response => response.json())
+        .then(response => {
+            document.getElementById('userProf').setAttribute('src', `public/assets/uploadImages/${response.result}`);
+            document.getElementById('topRightPhoto').setAttribute('src', `public/assets/uploadImages/${response.result}`);
+            document.getElementById('btnClosePhoto').click();
+        });
 
 }
+
+
+//////groups
+
+const newGroup = () => {
+    document.getElementById('modal_close_group').click();
+
+}
+
+var groupInfo;
+const selectContacts = async () => {
+
+    groupInfo = {};
+    var groupNameNode = document.getElementById('groupName');
+    var groupName = groupNameNode.value;
+    groupNameNode.value = '';
+
+    if (!groupName) {
+        groupNameNode.style.borderColor = 'red';
+        document.getElementById('groupNameLabel').style.color = 'red';
+    }
+    else {
+        $('#selectContacts').modal('show');
+        document.getElementById('closeModalgr').click();
+        groupInfo.name = groupName;
+        await getAllUsers();
+    }
+}
+
+var resultAllUser;
+
+const getAllUsers = async () => {
+    resultAllUser = '';
+    await fetch('/all-users')
+        .then(response => response.json())
+        .then(response => {
+            // console.log('response='+response);
+            let user_idArray = response.result.map(user => user.user_id);
+            localStorage.removeItem('allUsers');
+            localStorage.setItem('allUsers', JSON.stringify({ array: user_idArray }));
+            response.result.forEach((user) => { addAllUsers(user) });
+            $('#select_group_users').html('');
+            $('#select_group_users').append(resultAllUser);
+        });
+}
+
+const addAllUsers = (user) => {
+    let usersTemp =
+        `<div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="formCheck${user.user_id}">
+        <label class="form-check-label ms-2" for="formCheck${user.user_id}">
+            <div class="d-flex">
+                <div class="user-img away  align-self-center me-4 ">
+                    <img src="public/assets/uploadImages/${user.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:30px;width:30px;">
+                </div>
+                <div class="flex-1 align-self-center">
+                    <h5 class="text-truncate font-size-14 mb-1">${user.account_name}</h5>
+                    <p class="text-truncate mb-0 text-primary">@${user.username}</p>
+                </div>
+            </div>
+        </label>
+     </div>`
+    resultAllUser += usersTemp;
+}
+
+const createGroup = async () => {
+
+    let result = '';
+    let userIdArray = JSON.parse(localStorage.getItem('allUsers')).array;
+
+    for (let i = 0; i < userIdArray.length; i++) {
+        if (document.getElementById('formCheck' + userIdArray[i]).checked) {
+            result += userIdArray[i] + ',';
+        }
+    }
+    // console.log('result = '+result);
+    result = result.substring(0, result.length - 1);
+
+    groupInfo.users = result;
+
+    // console.log(groupInfo);
+
+    let result2 = await fetch('/create-group', {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ data: groupInfo })
+    });
+    let result3 = await result2.json();
+    console.log("kelgan data ::", result3);
+    document.getElementById('closeModalLast').click();
+}   

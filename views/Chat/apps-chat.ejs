@@ -275,6 +275,89 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
    </div>
+
+   <!-- modal groups -->
+   <div class="modal fade" id="groups" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title ms-1" style="color: darkgreen;" id="staticBackdropLabel">Groups</h5>
+                <form class="app-search d-lg-block ms-lg-5 ms-sm-2">
+                    <div class="position-relative">
+                        <input type="text" class="form-control" placeholder="<%=translation.Search%>" id="searchGroup">
+                        <span class="ri-search-line"></span>
+                    </div>
+                </form>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="modal_close_group"></button>
+            </div>
+            <div class="modal-body" style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
+                <div class="list-group" id="modal_body_group">
+                </div>
+                <hr>
+                <ul class="sub-menu list-unstyled mx-0" style="margin-bottom: 0px;" aria-expanded="false">             
+                    <li><a href="#newgroup" data-bs-toggle="modal" style="color: darkgreen; font-size:110%;" onclick="newGroup()">
+                        <i class="ri-add-line ri-2x align-middle"></i>
+                        <b>New Group</b></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary waves-effect waves-light">Save changes</button>
+            </div> -->
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="newgroup" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" style="margin-top: 12%; width: 26%;" role="document">
+        <div class="modal-content">
+            <div class="modal-body" style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
+                <form style="color: darkgreen;">
+                    <label class="form-label" for="groupName" id="groupNameLabel">
+                        Group Name
+                        <input class="form-control" id="groupName" type="text"
+                         style="border: 0px; border-bottom: 2px solid darkgreen; border-radius: 0px; margin-top: 1xp; color: black; font-weight: bolder;">
+                    </label>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeModalgr" class="btn btn-light waves-effect" style="border: 0px; color: darkred; font-weight: bolder;" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-light waves-effect waves-light"
+                style="border: 0px; color: darkgreen; font-weight: bolder;" onclick="selectContacts()">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- select contacts -->
+<div class="modal fade" id="selectContacts" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 20%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" style="color: darkgreen;">All Users</h6>
+                <form class="app-search d-lg-block ms-1">
+                    <div class="position-relative">
+                        <input type="text" class="form-control" placeholder="<%=translation.Search%>" id="searchContact">
+                        <span class="ri-search-line"></span>
+                    </div>
+                </form>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="modal_close_contact"></button>
+            </div>
+            <div class="modal-body" style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
+                <div class="list-group" id="select_group_users">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeModalLast" class="btn btn-light waves-effect" style="border: 0px; color: darkred; font-weight: bolder;" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-light waves-effect waves-light"
+                style="border: 0px; color: darkgreen; font-weight: bolder;" onclick="createGroup()">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </div>
 
 <%- contentFor('FooterJs') %>

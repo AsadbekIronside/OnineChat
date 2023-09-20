@@ -2,7 +2,6 @@ const knex = require('../db/db_init');
 
 const create_users = async ()=>{
 
-    await knex.schema.dropTableIfExists('tb_users');
     await knex.schema.createTable('tb_users', (table)=>{
         table.increments('user_id').primary();
         table.string('username').notNullable();
@@ -20,13 +19,12 @@ const create_users = async ()=>{
 
 const create_messages = async ()=>{
 
-    await knex.schema.dropTableIfExists('tb_messages');
     await knex.schema.createTable('tb_messages', (table)=>{
         table.increments('message_id').primary();
         table.integer('from_user_id').notNullable().unsigned();
         table.integer('to_user_id').notNullable();
         table.string('message',1000).notNullable();
-        table.string('message_status').defaultTo(1);
+        table.tinyint('message_status').defaultTo(1);
         table.string('create_time').notNullable();
         table.string('update_time').nullable();
         table.string('delete_time').nullable();
@@ -38,10 +36,45 @@ const create_messages = async ()=>{
 
 }
 
+const create_groups = async ()=>{
+
+    await knex.schema.createTable('tb_groups', (table)=>{
+        table.increments('id').primary();
+        table.string('name').notNullable();
+        table.string('users').notNullable();
+        table.integer('owner').notNullable();
+        table.string('admins').nullable();
+        table.tinyint('status').defaultTo(1);
+        table.string('create_time').notNullable();
+        table.string('delete_time').nullable();
+        table.string('update_time').nullable();
+    });
+    console.log('tb_groups created!');
+
+}
+
+const create_group_messages = async ()=>{
+
+    await knex.schema.createTable('tb_group_messages', (table)=>{
+        table.increments('id').primary();
+        table.integer('user').notNullable();
+        table.integer('group').notNullable();
+        table.string('message', 1000).notNullable();
+        table.tinyint('status').defaultTo(1);
+        table.string('create_time').notNullable();
+        table.string('delete_time').nullable();
+        table.string('update_time').nullable();
+    });
+    console.log('tb_group_messages created!');
+
+}
 
 (async function(){
 
     await create_users();
     await create_messages();
+
+    await create_group_messages();
+    await create_groups();
 
 }());

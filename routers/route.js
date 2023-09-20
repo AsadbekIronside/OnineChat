@@ -51,5 +51,8 @@ module.exports = function (app) {
       app.post('/update-user-name', isUserAllowed, mainController.update_account_name);
       app.get('/get-user-info', isUserAllowed, mainController.get_user_info);
       app.post('/update-profile-photo', isUserAllowed, upload.single('photo'), mainController.update_profile_photo);
+
+      app.get('/all-users', isUserAllowed, mainController.get_all_users);
+      app.post('/create-group', isUserAllowed, mainController.create_group);
       
 }
