@@ -1,7 +1,7 @@
 
 const { postMessages, getMessages, getUser, clearChat, getOnesTypedUser, getOnesUserTyped, getMessageById,
         updateAccountName, updateProfilePhoto, getAllUsers, createGroup, getMessagesUserRelated,
-        getAllGroups, getGroupById, getGroupMessages, postGroupMessages} = require('../model/crud');
+        getAllGroups, getGroupById, getGroupMessages, postGroupMessages, updateGroupUsers, deleteGroup} = require('../model/crud');
 
 const get_main_page = async (req, res) => {
     res.locals = { title: 'chat' };
@@ -301,7 +301,7 @@ const create_group = async (req, res) => {
         };
         let datum = await createGroup(data);
         if (datum)
-            res.json({ data: true });
+            res.json({ data: true , result: datum});
         else
             res.json({ data: false });
 
@@ -324,9 +324,12 @@ const get_groups = async (req, res) => {
             return res.json({result: false});
 
         allGroups.forEach((group)=>{
-            if(group.users.includes(current_user) || group.owner === current_user ){
+            // console.log('group.owner '+group.owner);
+            if(group.users.includes(current_user.toString()) || group.owner === current_user ){
                 finalResult.push(group);
             }
+            // console.log('group.users = '+group.users);
+            // console.log('current_user +'+current_user);
         });
 
         res.json({result: finalResult});
@@ -354,6 +357,24 @@ const get_group_by_id = async (req, res)=>{
     }
 }
 
+const show_member_profile = async (req, res)=>{
+    
+    try {
+        
+        let userId = parseInt(req.query.userId);
+        if(userId === req.session.user.user_id)
+            return res.json({result: false});
+
+        let userInfo = await getUser(userId);
+
+        res.json({result:userInfo[0]});
+
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+
 const get_group_members = async (req, res)=>{
 
     try {
@@ -371,13 +392,24 @@ const get_group_members = async (req, res)=>{
             userInfo = await getUser(array[i]);
             finalResult.push(userInfo[0]);
         }
-    
-        var ownerInfo = await getUser(owner);
+
+        var ownerInfo = false;
+
+        if(owner>0){
+                
+            ownerInfo = await getUser(owner);
+            ownerInfo = ownerInfo[0];
+
+        }
 
         // console.log('finalResult = '+finalResult);
         // console.log('ownerInfo = '+ownerInfo);
         
-        res.json({members: finalResult, owner:ownerInfo[0]});
+        res.json({
+            members: finalResult, 
+            owner:ownerInfo, 
+            current_user:req.session.user.user_id
+        });
 
     } catch (error) {
         console.log(error);
@@ -426,6 +458,59 @@ const post_group_messages  = async (req, res)=>{
 
 }
 
+const leave_group = async (req, res)=>{
+
+   try {
+
+        let current_user = req.session.user.user_id;
+        let groupId = parseInt(req.query.id);
+        
+        let groupInfo = await getGroupById(groupId);
+        // console.log(groupInfo);
+
+        let users = groupInfo[0].users;
+        // console.log(users);
+        let userIndex = users.indexOf(current_user.toString());
+        // console.log('userIndex ='+userIndex);         
+
+        if(userIndex < users.length-1)
+            users = users.substring(0, userIndex)+users.substring(userIndex+2);
+        else
+            users = users.substring(0, userIndex-1);
+
+        let result = await updateGroupUsers(users, groupId);
+        
+        if(!result)
+            return res.json({result:false});
+
+        res.json({result:true});
+
+    
+   } catch (error) {
+    console.log(error);
+   }
+
+}
+
+const delete_group = async (req, res)=>{
+
+    try {
+
+        let groupId = parseInt(req.query.id);
+    
+        let result = await deleteGroup(groupId);
+        // console.log(result);
+    
+        res.json({result: result});
+        
+    } catch (error) {
+
+        console.log(error);
+        
+    }
+
+}
+
 module.exports = {
     get_main_page,
     post_messages,
@@ -444,5 +529,8 @@ module.exports = {
     get_group_by_id,
     get_group_members,
     get_group_messages,
-    post_group_messages
+    post_group_messages,
+    leave_group,
+    delete_group,
+    show_member_profile
 }

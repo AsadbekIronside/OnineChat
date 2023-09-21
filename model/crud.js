@@ -147,6 +147,30 @@ const postGroupMessages = async(user, group, message)=>{
         
 }
 
+const updateGroupUsers = async(users, id)=>{
+    return await knex(groups).update({users:users, update_time: new Date()})
+    .where('id', '=', id)
+    .then(result =>{
+        return result;
+    })
+    .catch(err =>{
+        console.log(err);
+        return false;
+    });
+}
+
+const deleteGroup = async(id)=>{
+    return knex(groups).update({status:0, delete_time: new Date(), owner:0})
+    .where('id', '=', id)
+    .then(result => {
+        return true;
+    })
+    .catch(err =>{
+        console.log(err);
+        return false;
+    });
+}
+
 module.exports = {
     postMessages,
     getMessages,
@@ -163,6 +187,8 @@ module.exports = {
     getAllGroups,
     getGroupById,
     getGroupMessages,
-    postGroupMessages
+    postGroupMessages,
+    updateGroupUsers,
+    deleteGroup
 };
 

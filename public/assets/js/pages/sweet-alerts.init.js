@@ -63,56 +63,6 @@ File: Sweetalert Js File
         });
   
 
-        //Parameter
-        $('#sa-params').click(function () {
-            var val='';
-			Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, clear chat!',
-                cancelButtonText: 'No, cancel!',
-                confirmButtonClass: 'btn btn-success mt-2',
-                cancelButtonClass: 'btn btn-danger ms-2 mt-2',
-                buttonsStyling: false
-            }).then(async function (result) {
-                if (result.value) {
-                    val = await clearChat();
-
-                    if(val !== -1){
-                        $('#messageList').html('');
-                        // // var child = document.getElementById('b'+val);
-                        // // document.getElementById('chatsGroup').removeChild(child);
-                        // document.getElementById('search').setAttribute('hidden', true);
-                        // document.getElementById('params').setAttribute('hidden', true);
-                        $('#to_user').html('');
-                        Swal.fire({
-                            title: 'Deleted!',
-                            text: 'Chat has been cleared.',
-                            icon: 'success'
-                          })
-
-                    }
-                    else{
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Some error occured!',
-                            icon: 'error'
-                          })
-                    }
-                  } else if (
-                    // Read more about handling dismissals
-                    result.dismiss === Swal.DismissReason.cancel
-                  ) {
-                    Swal.fire({
-                      title: 'Cancelled',
-                      text: 'Your messaages are safe :)',
-                      icon: 'error'
-                    })
-                  }
-            });
-        });
 
         //Custom Image
         $('#sa-image').click(function () {

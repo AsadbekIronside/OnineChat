@@ -275,7 +275,7 @@ const start_new_chat = async (userId) => {
 
     let chatTemp = 
     ` <a class="dropdown-item" href="#toUserProfile" data-bs-toggle="modal">View Profile</a>
-      <a class="dropdown-item" href="javascript:void(0);" id="sa-params">Clear chat</a>`;
+      <a class="dropdown-item" href="javascript:void(0);" onclick="clearChat2()">Clear chat</a>`;
 
     $('#dropdownMenu').html('');
 
@@ -468,7 +468,7 @@ const start_chat = async (userId) => {
 
     let chatTemp = 
     ` <a class="dropdown-item" href="#toUserProfile" data-bs-toggle="modal">View Profile</a>
-      <a class="dropdown-item" href="javascript:void(0);" id="sa-params">Clear chat</a>`;
+      <a class="dropdown-item" href="javascript:void(0);" onclick="clearChat2()">Clear chat</a>`;
 
     $('#dropdownMenu').html('');
     $('#dropdownMenu').append(chatTemp);
@@ -788,6 +788,7 @@ const createGroup = async () => {
     let result3 = await result2.json();
     console.log("kelgan data ::", result3);
     document.getElementById('closeModalLast').click();
+    start_new_group(result3.result);
 }   
 var groupResult;
 
@@ -814,6 +815,7 @@ const getGroups = async()=>{
 }
 
 const add_groups = (group)=>{
+    // console.log('group = '+group.id);
 
     const groupTemp =
         `<a href="javascript: void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_new_group(${group.id})" 
@@ -843,7 +845,7 @@ const start_new_group = async(id)=>{
     let group = await fetch('/get-group-info?id='+id)
     .then(response => response.json())
     .then(response => response.result)
-    .catch(err => console.log(err));
+    .catch(err => {console.log(err);});
 
     if(!group){
         console.log('groupInfo = '+group);
@@ -863,7 +865,7 @@ const start_new_group = async(id)=>{
 
     let menuTemp =
     ` <a class="dropdown-item" href="#groupProfile" data-bs-toggle="modal"><i class="bi bi-info-circle align-middle fa-lg me-2"></i>View Group Info</a>
-      <a class="dropdown-item text-danger" href="javascript:void(0);" id="sa-params"><i class="bi bi-box-arrow-right align-middle fa-lg me-2"></i>Leave Group</a>`
+      <a class="dropdown-item text-danger" href="javascript:void(0);" onclick="leaveChat()"><i class="bi bi-box-arrow-right align-middle fa-lg me-2"></i>Leave Group</a>`
 
     $('#dropdownMenu').html('');
 
@@ -886,33 +888,44 @@ const start_new_group = async(id)=>{
 
     const response = await fetch('/get-group-members?members='+group.users+'&owner='+group.owner)
     .then(response => response.json())
-    .then(response => response)
-    .catch(er => console.log(er));
+    .catch(er => {console.log(er);});
 
-    const members = response.members;
-    const owner = response.owner;
+    var members = response.members;
+    var owner = response.owner;
+    var current_user = response.current_user;
 
-    // console.log('members = '+members);
-    // console.log('owner = '+owner);
+    // console.log('members = '+members[0]);
+    // console.log(typeof owner);
 
     if(!members){
         console.log('members = '+members);
         return;
     }
 
-    membersTemp +=
-    `<a href="javascript:void(0);" class="list-group-item list-group-item-action fw-bolder" onclick="start_chat(${owner.user_id})">
-        <div class="d-flex">
-            <div class="user-img away  align-self-center me-4 ">
-                <img src="public/assets/uploadImages/${owner.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:50px;width:50px;">
+    if(owner){
+        membersTemp +=
+        `<a href="#groupMemberProfile" data-bs-toggle="modal" class="list-group-item list-group-item-action fw-bolder" data-bs-dismiss="modal" onclick="show_member_profile(${owner.user_id})">
+            <div class="d-flex">
+                <div class="user-img away  align-self-center me-4 ">
+                    <img src="public/assets/uploadImages/${owner.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:50px;width:50px;">
+                </div>
+                <div class="flex-1 overflow-hidden align-self-center">
+                    <h5 class="text-truncate font-size-14 mb-1">${owner.account_name}</h5>
+                </div>
+                <div class="font-size-13 text-primary">Owner</div>
             </div>
-            <div class="flex-1 overflow-hidden align-self-center">
-                <h5 class="text-truncate font-size-14 mb-1">${owner.account_name}</h5>
-            </div>
-            <div class="font-size-13 text-primary">Owner</div>
-        </div>
-      </a>`;
-    
+          </a>`;    
+          if(owner.user_id === current_user){
+                let menuTemp =
+                ` <a class="dropdown-item" href="#groupProfile" data-bs-toggle="modal"><i class="bi bi-info-circle align-middle fa-lg me-2"></i>View Group Info</a>
+                <a class="dropdown-item text-danger" href="javascript:void(0);" onclick="delete_group()"><i class="bi bi-box-arrow-right align-middle fa-lg me-2"></i>Delete And Leave Group</a>`
+            
+                $('#dropdownMenu').html('');
+            
+                $('#dropdownMenu').append(menuTemp);
+          }
+    }
+
     members.forEach((user)=>{
         // console.log('user = '+user);
         add_members(user);
@@ -948,7 +961,6 @@ const start_new_group = async(id)=>{
     $('#messageList').html('');
 
     // cursor
-
     // $('#messageGroup').focus();
 
     titleArray = [];
@@ -981,12 +993,19 @@ const add_members = (user)=>{
 
 const show_member_profile = async(userId)=>{
 
-    let user = await fetch('/start-chat?userId=' + userId)
+    let user = await fetch('/show-member-profile?userId=' + userId)
     .then(response => response.json())
+    .then(response => response.result)
     .catch(err => console.log(err));
 
+    if(!user){
+        $('#otaDiv').html('');
+        console.log('result : '+false);
+        return;
+    }
+
     let userProfile =
-        ` <div class="col-md-4">
+        `<div class="col-md-4">
             <img class="card-img rounded-circle img-thumbnail" style="background-position: center; height: 100%; width: 100%; object-fit: cover;"
             src="public/assets/uploadImages/${user.profile_photo}" alt="Card image" id="userProf">
         </div>
@@ -1014,7 +1033,7 @@ const get_group_messages = async(groupId)=>{
     
     let messages = await fetch('/get-group-messages?id='+groupId+'&count='+countMessage)
     .then(response => response.json())
-    .catch(err => console.log(err));
+    .catch(err =>{ console.log(err);});
 
     if(!messages.result){
         console.log('messages = '+messages);
