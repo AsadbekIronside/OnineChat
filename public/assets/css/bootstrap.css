@@ -9387,7 +9387,7 @@ button, a {
   .dropdown-menu.show {
     top: 100% !important; }
   .dropdown-menu[style] {
-    left: auto !important;
+    left: 0;
     right: 0; }
 
 .dropdown-menu-end[style] {

@@ -23,9 +23,7 @@ const getMessages = async (count, from_user_id, to_user_id) => {
 const getMessagesUserRelated = async (current_user_id) => {
 
     return await knex(messages).select(['from_user_id', 'to_user_id'])
-       .where('message_status', '=', '1')
-       .andWhere('from_user_id', '=', current_user_id)
-       .orWhere('to_user_id', '=', current_user_id);
+        .where(knex.raw(`(from_user_id=${current_user_id} OR to_user_id=${current_user_id}) AND message_status=1`));
 
 }
 
@@ -171,6 +169,19 @@ const deleteGroup = async(id)=>{
     });
 }
 
+const updateGroupPhoto = async(id, photo)=>{
+    return await knex(groups).update({photo:photo, update_time:new Date()})
+    .where('id', '=', id)
+    .andWhere('status', '=', '1')
+    .then(result =>{
+        return result;
+    })
+    .catch(err =>{
+        console.log(err);
+        return false;
+    });
+}
+
 module.exports = {
     postMessages,
     getMessages,
@@ -189,6 +200,7 @@ module.exports = {
     getGroupMessages,
     postGroupMessages,
     updateGroupUsers,
-    deleteGroup
+    deleteGroup,
+    updateGroupPhoto
 };
 

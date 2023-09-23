@@ -3616,3 +3616,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td {
 
 
 
+        .dropdown-menu[style]{
+          right: 0;
+          top: 0;
+        }

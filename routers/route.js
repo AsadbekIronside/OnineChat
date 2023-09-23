@@ -4,6 +4,7 @@ var urlencodeParser = bodyParser.urlencoded({ extended: false });
 var cors = require('cors');
 var path = require('path');
 var multer = require('multer');
+
 var storage = multer.diskStorage({
       destination:(req, file, cb)=>{
             cb(null, 'public/assets/uploadImages/')
@@ -13,7 +14,17 @@ var storage = multer.diskStorage({
             cb(null, Date.now()+ path.extname(file.originalname))
       }
 });
+
+var storage2 = multer.diskStorage({
+      destination:(req, file, cb)=>{
+            cb(null, 'public/assets/groupImages/');
+      },
+      filename:(req, file, cb)=>{
+            cb(null, Date.now()+path.extname(file.originalname));
+      }
+})
 var upload = multer({storage:storage});
+var uploadGroupPhotos = multer({storage:storage2});
 
 app.use(urlencodeParser);
 app.use(bodyParser.json());
@@ -52,6 +63,7 @@ module.exports = function (app) {
       app.get('/get-user-info', isUserAllowed, mainController.get_user_info);
       app.post('/update-profile-photo', isUserAllowed, upload.single('photo'), mainController.update_profile_photo);
 
+      // group
       app.get('/all-users', isUserAllowed, mainController.get_all_users);
       app.post('/create-group', isUserAllowed, mainController.create_group);
       app.get('/get-groups', isUserAllowed, mainController.get_groups);
@@ -59,13 +71,17 @@ module.exports = function (app) {
       app.get('/get-group-members', isUserAllowed, mainController.get_group_members);
       app.get('/show-member-profile', isUserAllowed, mainController.show_member_profile);
 
+      app.get('/leave-group', isUserAllowed, mainController.leave_group);
+      app.get('/delete-group', isUserAllowed, mainController.delete_group);
+
+      app.get('/get-users-to-add', isUserAllowed, mainController.get_users_to_add);
+      app.post('/add-users', isUserAllowed, mainController.add_users_to_group);
+      app.get('/get-group-members-info', isUserAllowed, mainController.get_group_members_info);
+      app.post('/update-group-photo', isUserAllowed, uploadGroupPhotos.single('photo'), mainController.update_group_photo);
+
       /////group messages
 
       app.get('/get-group-messages', isUserAllowed, mainController.get_group_messages);
       app.post('/post-group-messages', isUserAllowed, mainController.post_group_messages);
-      app.get('/leave-group', isUserAllowed, mainController.leave_group);
-      app.get('/delete-group', isUserAllowed, mainController.delete_group);
-
-
       
 }

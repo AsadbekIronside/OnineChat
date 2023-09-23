@@ -115,41 +115,47 @@ const deleteUser = async(req, res)=>{
 
 const post_register =  async(req, res)=>{
  
-    var username = req.body.username;
-    var password = req.body.password;
-    var acc_name = req.body.account_name;
-    var result = false;
+    try {
 
-    if(username.startsWith('@')){
-        username = username.substring(1);
-    }
-    const allPasswords = await getAllPasswords();
-    const existsUserUsername = await check_username_exists(username);
-    
-    for(let i=0; i < allPasswords.length; i++){
-        result = await bcrypt.compare(password, allPasswords[i].password);
-        if(result){
-            req.flash('error', 'Password has already been used. Please create a new one!');
-            res.redirect('/register');
-            break;
+        var username = req.body.username;
+        var password = req.body.password;
+        var acc_name = req.body.account_name;
+        var result = false;
+
+        if(username.startsWith('@')){
+            username = username.substring(1);
         }
-    }
-    if(result === false){
+        const allPasswords = await getAllPasswords();
+        const existsUserUsername = await check_username_exists(username);
         
-        if(existsUserUsername[0] && existsUserUsername[0].username.localeCompare(username) ===0 ){
+        for(let i=0; i < allPasswords.length; i++){
+            result = await bcrypt.compare(password, allPasswords[i].password);
+            if(result){
+                req.flash('error', 'Password has already been used. Please create a new one!');
+                res.redirect('/register');
+                break;
+            }
+        }
+        if(result === false){
+            
+            if(existsUserUsername[0] && existsUserUsername[0].username.localeCompare(username) ===0 ){
 
-            req.flash('error', 'Username have already been taken. Please find a new one!');
-            res.redirect('/register');
+                req.flash('error', 'Username have already been taken. Please find a new one!');
+                res.redirect('/register');
 
-        } else {
-            const cryptedPassword = await bcrypt.hash(password, 10);
-            const user = await post_user({username:username, password:cryptedPassword, account_name: acc_name});
-            // Assign value in session
-            sess = req.session;
-            sess.user = user[0];
-            res.redirect('/');
+            } else {
+                const cryptedPassword = await bcrypt.hash(password, 10);
+                const user = await post_user({username:username, password:cryptedPassword, account_name: acc_name});
+                // Assign value in session
+                sess = req.session;
+                sess.user = user[0];
+                res.redirect('/');
+            }
+            
         }
         
+    } catch (error) {
+        console.log(error);
     }
 
 }

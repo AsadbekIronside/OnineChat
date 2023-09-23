@@ -105,11 +105,11 @@ function addMessage(message, to_user_info) {
                             <div class="ctext-wrap">
                                 <div class="ctext-wrap-content">
                                     <p class="mb-0">${message.message}</p>
-                                    <div class="btn-group dropstart" style="position:absolute; rigtht:0; bottom:26px; margin-left:15px;">
+                                    <div class="btn-group dropstart" style="position:absolute; bottom:26px; margin-left:15px;">
                                             <a class="dropdown-toggle" data-bs-toggle="dropdown" data-toggle="dropdown">
                                             <i class="ri-more-2-fill ri-lg"></i>
                                             </a>
-                                        <div class="dropdown-menu">
+                                        <div class="dropdown-menu" style="position:absolute; right: 0px; top:10px; width:10px !important;">
                                             <a class="dropdown-item" href="#"><i class="ri-pencil-fill"></i></a>
                                             <a class="dropdown-item" href="#"><i class="ri-delete-bin-7-fill"></i></a>
                                         </div>
@@ -142,17 +142,19 @@ function addMessage(message, to_user_info) {
     $('#messageList').append(temp);
     scrollToBottom();
 }
-function sendMessage() {
+async function sendMessage() {
     const mess = document.getElementById('message').value;
     const toUserId = document.getElementById('userId').innerHTML;
     const time = new Date();
+
+    // console.log(toUserId);
 
     document.getElementById('message').value = '';
 
     if (!mess)
         return;
 
-    fetch('/post-messages', {
+    await fetch('/post-messages', {
         method: "POST",
         mode: "cors",
         headers: { "Content-type": "application/json; charset=UTF-8" },
@@ -206,7 +208,7 @@ const add_contacts = async (user) => {
                 <div class="card m-0">
                 <div class="row no-gutters align-items-center">
                     <div class="col-md-4">
-                    <img src="public/assets/uploadImages/${user.profile_photo}" class="rounded-circle ms-3" style="height:80px;">
+                    <img src="public/assets/uploadImages/${user.profile_photo}" class="rounded-circle ms-3" style="height:80px; width:80px;">
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
@@ -267,7 +269,7 @@ const start_new_chat = async (userId) => {
 
     $('#toUserPhoto').html('');
     $('#toUserPhoto').append(`<img class="card-img img-fluid rounded-circle img-thumbnail" 
-    style="background-position: center; height: 100%; width: 100%; object-fit: cover;"
+    style="background-position: center; height: 140px; width: 140px; object-fit: cover;"
      src="public/assets/uploadImages/${response.profile_photo}" alt="Card image">`);
 
     document.getElementById('search').removeAttribute('hidden');
@@ -526,7 +528,6 @@ document.getElementById('searchChats').addEventListener('keyup', async() => {
             chats.splice(i, 1);
             localStorage.removeItem('chats');
             localStorage.setItem('chats', JSON.stringify({chats: chats}));
-
         }
     }
 });
@@ -645,7 +646,7 @@ const show_user_profile = async () => {
 
     let userProfile =
         ` <div class="col-md-4">
-            <img class="card-img rounded-circle img-thumbnail" style="background-position: center; height: 100%; width: 100%; object-fit: cover;"
+            <img class="card-img rounded-circle img-thumbnail" style="background-position: center; height: 140px; width: 140px; object-fit: cover;"
             src="public/assets/uploadImages/${user.profile_photo}" alt="Card image" id="userProf">
         </div>
         <div class="col-md-8">
@@ -684,12 +685,12 @@ const updatePhoto = async () => {
         method: 'POST',
         body: formData
     })
-        .then(response => response.json())
-        .then(response => {
-            document.getElementById('userProf').setAttribute('src', `public/assets/uploadImages/${response.result}`);
-            document.getElementById('topRightPhoto').setAttribute('src', `public/assets/uploadImages/${response.result}`);
-            document.getElementById('btnClosePhoto').click();
-        });
+    .then(response => response.json())
+    .then(response => {
+        document.getElementById('userProf').setAttribute('src', `public/assets/uploadImages/${response.result}`);
+        document.getElementById('topRightPhoto').setAttribute('src', `public/assets/uploadImages/${response.result}`);
+        document.getElementById('btnClosePhoto').click();
+    });
 
 }
 
@@ -746,20 +747,20 @@ const getAllUsers = async () => {
 
 const addAllUsers = (user) => {
     let usersTemp =
-        `<div class="form-check mb-3">
-        <input class="form-check-input" type="checkbox" id="formCheck${user.user_id}">
-        <label class="form-check-label ms-2" for="formCheck${user.user_id}">
-            <div class="d-flex">
-                <div class="user-img away align-self-center me-4">
-                    <img src="public/assets/uploadImages/${user.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:30px;width:30px;">
+        `<div class="form-check mb-3" id="form${user.user_id}">
+            <input class="form-check-input" type="checkbox" id="formCheck${user.user_id}">
+            <label class="form-check-label ms-2" for="formCheck${user.user_id}">
+                <div class="d-flex">
+                    <div class="user-img away align-self-center me-4">
+                        <img src="public/assets/uploadImages/${user.profile_photo}" class="rounded-circle avatar-xs" alt="avatar-3" style="height:30px;width:30px;">
+                    </div>
+                    <div class="flex-1 align-self-center me-4">
+                        <h5 class="text-truncate font-size-14 mb-1">${user.account_name}</h5>
+                        <p class="text-truncate mb-0 text-primary">@${user.username}</p>
+                    </div>
                 </div>
-                <div class="flex-1 align-self-center me-4">
-                    <h5 class="text-truncate font-size-14 mb-1">${user.account_name}</h5>
-                    <p class="text-truncate mb-0 text-primary">@${user.username}</p>
-                </div>
-            </div>
-        </label>
-     </div>`
+            </label>
+         </div>`
     resultAllUser += usersTemp;
 }
 
@@ -805,6 +806,7 @@ const getGroups = async()=>{
         return;
     }
 
+    // console.log('groups = '+result);
     result.forEach((group)=>{
         add_groups(group);
     });
@@ -823,7 +825,7 @@ const add_groups = (group)=>{
                 <div class="card m-0">
                     <div class="row no-gutters align-items-center">
                         <div class="col-md-4">
-                        <img src="public/assets/groupImages/${group.photo}" class="rounded-circle img-thumbnail ms-3" style="height:80px;">
+                        <img src="public/assets/groupImages/${group.photo}" class="rounded-circle img-thumbnail ms-3" style="height:80px; width:80px">
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
@@ -838,7 +840,6 @@ const add_groups = (group)=>{
 }
 
 var membersTemp;
-// var myInterval = setInterval(() => { }, 10000);
 
 const start_new_group = async(id)=>{
 
@@ -855,7 +856,7 @@ const start_new_group = async(id)=>{
 
     let groupProfile = 
         `<h5 class="font-size-15 mb-1 text-truncate">${group.name}<p id="groupId" hidden>${group.id}</p></h5>
-        <p class="text-truncate mb-0">${users.length+1} members</p>`;
+        <p class="text-truncate mb-0 members">${users.length+1} members</p>`;
 
     $('#to_user').html('');
     $('#to_user').html(groupProfile);
@@ -875,13 +876,13 @@ const start_new_group = async(id)=>{
 
     const cardBody =
         `<h6 class="card-text ">${group.name}</h6>
-         <p class="card-text ">${users.length+1} members</p>`;
+         <p class="card-text members">${users.length+1} members</p>`;
 
     $('#cardBodyGroup').html('');
     $('#cardBodyGroup').append(cardBody);
 
     $('#groupPhoto').html('');
-    $('#groupPhoto').append(`<img class="card-img img-fluid rounded-circle img-thumbnail" style="object-fit: cover;" src="public/assets/groupImages/${group.photo}" alt="Card image">`);
+    $('#groupPhoto').append(`<img class="card-img img-fluid rounded-circle img-thumbnail mt-3" style="width:130px; height:130px;" src="public/assets/groupImages/${group.photo}" alt="Card image">`);
 
 
     membersTemp='';
@@ -917,7 +918,7 @@ const start_new_group = async(id)=>{
           </a>`;    
           if(owner.user_id === current_user){
                 let menuTemp =
-                ` <a class="dropdown-item" href="#groupProfile" data-bs-toggle="modal"><i class="bi bi-info-circle align-middle fa-lg me-2"></i>View Group Info</a>
+                `<a class="dropdown-item" href="#groupProfile" data-bs-toggle="modal"><i class="bi bi-info-circle align-middle fa-lg me-2"></i>View Group Info</a>
                 <a class="dropdown-item text-danger" href="javascript:void(0);" onclick="delete_group()"><i class="bi bi-box-arrow-right align-middle fa-lg me-2"></i>Delete And Leave Group</a>`
             
                 $('#dropdownMenu').html('');

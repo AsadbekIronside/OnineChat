@@ -1,7 +1,9 @@
 
 const { postMessages, getMessages, getUser, clearChat, getOnesTypedUser, getOnesUserTyped, getMessageById,
         updateAccountName, updateProfilePhoto, getAllUsers, createGroup, getMessagesUserRelated,
-        getAllGroups, getGroupById, getGroupMessages, postGroupMessages, updateGroupUsers, deleteGroup} = require('../model/crud');
+        getAllGroups, getGroupById, getGroupMessages, postGroupMessages, updateGroupUsers, deleteGroup,
+        updateGroupPhoto } 
+    = require('../model/crud');
 
 const get_main_page = async (req, res) => {
     res.locals = { title: 'chat' };
@@ -10,11 +12,17 @@ const get_main_page = async (req, res) => {
 }
 
 const post_messages = async (req, res) => {
-    const data = {
-        from_user_id: req.session.user.user_id, to_user_id: req.body.to_user_id,
-        message: req.body.message, create_time: req.body.createTime
-    };
-    await postMessages(data);
+    try {
+        let toUser = parseInt(req.body.to_user_id);
+        console.log('to_user_id = '+toUser);
+        const data = {
+            from_user_id: req.session.user.user_id, to_user_id:toUser ,
+            message: req.body.message, create_time: req.body.createTime
+        };
+        await postMessages(data);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 const get_messages = async (req, res) => {
@@ -53,9 +61,10 @@ const get_contacts = async (req, res) => {
                 mySet.add(users[i].from_user_id);
         }
         
-        // console.log('myset = '+mySet);
+        // console.log(mySet.size);
 
         allUsers = allUsers.map(user => user.user_id);
+        console.log('allUsers = '+allUsers);
 
         for(let i=0; i < allUsers.length; i++){
             if(!mySet.has(allUsers[i])){
@@ -64,7 +73,7 @@ const get_contacts = async (req, res) => {
             }
         }
         
-        // console.log('finalResult = '+finalResult);
+        // console.log('finalResult = '+finalResult.length);
 
         res.json({ contacts: finalResult });
         
@@ -318,7 +327,7 @@ const get_groups = async (req, res) => {
         let allGroups = await getAllGroups();
         var finalResult = [];
 
-        // console.log(allGroups);
+        // console.log('allGroups = '+allGroups);
 
         if(!allGroups || allGroups.length === 0)
             return res.json({result: false});
@@ -511,26 +520,138 @@ const delete_group = async (req, res)=>{
 
 }
 
+const get_users_to_add = async (req, res)=>{
+
+    try {
+
+        let groupId = parseInt(req.query.id);
+        let current_user = req.session.user.user_id;
+
+        let groupInfo = await getGroupById(groupId);
+        
+        var users = groupInfo[0].users;
+        var owner = groupInfo[0].owner;
+        var members = users.split(',');
+
+        var userInfo;
+        var finalResult = [];
+
+        members = members.map(el => parseInt(el));
+        members.push(owner);
+
+        // get all users
+        var allUsers = await getAllUsers(current_user);
+
+        var result = allUsers.map(user => user.user_id).filter(id => !members.includes(id));
+
+        // console.log('allUsers = '+allUsers);
+        // console.log('result = '+ result);
+
+        for(let x of result){
+            userInfo = await getUser(x);
+            finalResult.push(userInfo[0]);
+        }
+
+        res.json({result:finalResult});
+
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const add_users_to_group = async (req, res)=>{
+
+    try {
+
+        let newUsers = req.body.newUsers;
+        // console.log(newUsers[0]);
+
+        let groupId = parseInt(req.body.groupId);
+        
+        let groupInfo = await getGroupById(groupId);
+
+        var users =groupInfo[0].users;
+        newUsers.forEach((userId)=>{
+            users+=','+userId;
+        });
+
+        // console.log('users = '+users);
+
+        var result = await updateGroupUsers(users, groupId);
+        
+        if(result)
+            result = true;
+
+        res.json({result: result});
+        
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+
+const get_group_members_info = async (req, res)=>{
+    
+    try {
+
+        let groupId = parseInt(req.query.id);
+        let groupInfo = await getGroupById(groupId);
+    
+        let ownerInfo = await getUser(groupInfo[0].owner);
+        var members = groupInfo[0].users.split(',');
+    
+        var userInfo;
+        var finalResult = [];
+    
+        for(let x of members){
+            userInfo = await getUser(parseInt(x));
+            finalResult.push(userInfo[0]);
+        }
+    
+        res.json({
+            members: finalResult, 
+            owner:ownerInfo[0], 
+            current_user:req.session.user.user_id
+        });
+        
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+
+const update_group_photo = async (req, res)=>{
+
+    try {
+
+        let groupId = parseInt(req.query.id);
+        let photo = req.file.filename;
+    
+        let result = await updateGroupPhoto(groupId, photo);
+    
+        if(result)
+            result = true;
+    
+        res.json({result:result, photo:photo});
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
-    get_main_page,
-    post_messages,
-    get_messages,
-    get_contacts,
-    get_chats,
-    start_chat,
-    clear_chat,
-    get_unreplied,
-    update_account_name,
-    get_user_info,
-    update_profile_photo,
-    get_all_users,
-    create_group,
-    get_groups,
-    get_group_by_id,
-    get_group_members,
-    get_group_messages,
-    post_group_messages,
-    leave_group,
-    delete_group,
-    show_member_profile
+    get_main_page, post_messages,
+    get_messages, get_contacts,
+    get_chats, start_chat,
+    clear_chat, get_unreplied,
+    update_account_name, get_user_info,
+    update_profile_photo, get_all_users,
+    create_group, get_groups,
+    get_group_by_id, get_group_members,
+    get_group_messages, post_group_messages,
+    leave_group, delete_group,
+    show_member_profile, get_users_to_add,
+    add_users_to_group, get_group_members_info,
+    update_group_photo
 }
