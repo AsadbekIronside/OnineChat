@@ -1,465 +1,537 @@
 <%- contentFor('HeaderCss') %>
-<!-- Sweet Alert-->
-<link href="public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+    <!-- Sweet Alert-->
+    <link href="public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 
-<%- contentFor('breadcrumb') %>
+    <%- contentFor('breadcrumb') %>
 
 
-<%- contentFor('body') %>
+        <%- contentFor('body') %>
 
-<div class="d-lg-flex mb-1 mt-0">
-    <div class="chat-leftsidebar">
-            
-        <div class="card-body border-bottom py-3">
-            <div class="search-box chat-search-box">
-                <div class="position-relative">
-                    <input type="text" class="form-control" placeholder="Search..." id="searchChats">
-                    <i class="ri-search-line search-icon"></i>
-                </div>
-            </div>
-        </div>
+            <div class="d-lg-flex mb-1 mt-0">
+                <div class="chat-leftsidebar">
+                    <div class="card-body border-bottom py-3">
+                        <div class="search-box chat-search-box">
+                            <div class="position-relative">
+                                <input type="text" class="form-control" placeholder="Search..." id="searchChats">
+                                <i class="ri-search-line search-icon"></i>
+                            </div>
+                        </div>
+                    </div>
 
-        <div class="py-4">
-            <div class="" id="chat">
-                <div>
-                    <h5 class="font-size-14 px-3 mb-3">Chats</h5>
-                    <div class="list-group"  style="max-height: 500px; overflow-y: scroll;" id="chatsGroup">
+                    <div class="py-4">
+                        <div class="" id="chat">
+                            <div>
+                                <h5 class="font-size-14 px-3 mb-3">Chats</h5>
+                                <div class="list-group myScroll" style="max-height: 500px; min-height: 500px; overflow: auto;"
+                                    id="chatsGroup">
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-            </div>
 
-        </div>
-    </div>
-
-    <div class="w-100 user-chat mt-4 mt-sm-0">
-        <div class="p-3 px-lg-4 user-chat-border" style="background-color:lightgray;">
-            <div class="row">
-                <div class="col-md-4 col-6" id="to_user">
-                </div>
-                <div class="col-md-8 col-6">
-                    <ul class="list-inline user-chat-nav text-end mb-0">
-                        <li class="list-inline-item d-inline-block d-sm-none">
-                            <div class="dropdown">
-                                <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="mdi mdi-magnify"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-md">
-                                    <form class="p-2">
-                                        <div class="search-box">
-                                            <div class="position-relative">
-                                                <input type="text" class="form-control rounded" placeholder="Search...">
+                <div class="w-100 user-chat mt-4 mt-sm-0">
+                    <div class="p-3 px-lg-4 user-chat-border" style="background-color:lightgray;">
+                        <div class="row">
+                            <div class="col-md-4 col-6" id="to_user">
+                            </div>
+                            <div class="col-md-8 col-6">
+                                <ul class="list-inline user-chat-nav text-end mb-0">
+                                    <li class="list-inline-item d-inline-block d-sm-none">
+                                        <div class="dropdown">
+                                            <button class="btn nav-btn dropdown-toggle" type="button"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="mdi mdi-magnify"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-md">
+                                                <form class="p-2">
+                                                    <div class="search-box">
+                                                        <div class="position-relative">
+                                                            <input type="text" class="form-control rounded"
+                                                                placeholder="Search...">
+                                                            <i class="mdi mdi-magnify search-icon"></i>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="d-none d-sm-inline-block">
+                                        <div class="search-box me-2">
+                                            <div class="position-relative" id="search" hidden>
+                                                <input type="text" class="form-control" placeholder="Search...">
                                                 <i class="mdi mdi-magnify search-icon"></i>
                                             </div>
                                         </div>
+                                    </li>
+                                    <li class="list-inline-item m-0 d-sm-inline-block">
+                                        <div class="dropdown" id="params" hidden>
+                                            <button class="btn nav-btn dropdown-toggle" type="button"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="mdi mdi-dots-horizontal"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-end" id="dropdownMenu">
+                                                <a class="dropdown-item" href="#toUserProfile"
+                                                    data-bs-toggle="modal">View Profile</a>
+                                                <a class="dropdown-item" href="javascript:void(0);"
+                                                    onclick="clearChat()">Clear chat</a>
+                                            </div>
+                                        </div>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-lg-2">
+                        <div class="chat-conversation p-3 myScroll"
+                            style="overflow-y: auto; max-height: 500px; min-height: 500px;" id="chat_area">
+                            <ul class="list-unstyled mb-0 pe-3" id="messageList">
+                                <h1 class="display-6" style="margin-top: 20%; text-align: center;">Chat messages will be
+                                    displayed here after you start typing!</h1>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div class="px-lg-3">
+                        <div class="p-3 chat-input-section">
+                            <form>
+                                <div class="row" id="enterMessage">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4 col-xl-3">
+                <!-- Modal user profile -->
+                <div class="modal fade" id="myModal" data-bs-keyboard="false" tabindex="0" role="dialog"
+                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">My Account</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="row no-gutters align-items-center border bg-white border-warning"
+                                            id="userProfileCard">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <a href="#modalProfilePhoto" data-bs-toggle="modal" data-bs-dismiss="modal"
+                                            class="text-dark ms-4">
+                                            <i class="ri-image-add-fill align-middle me-1 ri-lg text-success"></i>
+                                            <span>Change Profile Photo</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <a href="#modalUsername" data-bs-toggle="modal" data-bs-dismiss="modal"
+                                            class="text-dark ms-4">
+                                            <i class="ri-pencil-line align-middle me-1 ri-lg text-success"></i>
+                                            <span>Change Name</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <!-- Modal contacts-->
+                <div class="modal fade" id="contacts" data-bs-keyboard="false" tabindex="-1" role="dialog"
+                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" style="color: darkgreen;" id="staticBackdropLabel">Contacts</h5>
+                                <form class="app-search d-lg-block ms-lg-5 ms-sm-2">
+                                    <div class="position-relative">
+                                        <input type="text" class="form-control" placeholder="<%=translation.Search%>"
+                                            id="searchContact">
+                                        <span class="ri-search-line"></span>
+                                    </div>
+                                </form>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                    id="modal_close_contact"></button>
+                            </div>
+                            <div class="modal-body myScroll"
+                                style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
+                                <div class="list-group" id="modal_body_group">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- toUser profile  -->
+
+                <div class="modal fade" id="toUserProfile" data-bs-keyboard="false" tabindex="-1" role="dialog"
+                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="row no-gutters align-items-center border bg-white border-success">
+                                            <div class="col-md-4 " id="toUserPhoto">
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="card-body" id="cardBody">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- edit name -->
+            <div class="modal fade bs-example-modal-center" tabindex="-1" aria-hidden="true" id="modalUsername">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" data-bs-target="#myModal" data-bs-toggle="modal"
+                                data-bs-dismiss="modal" style="border: 0px; background-color: white;"><i
+                                    class="bi bi-arrow-left align-middle ri-2x"></i></button>
+                            <button type="button" id="btnClosePhoto" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <label class="form-label" id="currentName">
+                                </label>
+                                <label class="form-label" for="newName">
+                                    New Name:
+                                    <input type="text" class="form-control" placeholder="Enter name..." id="newName">
+                                </label>
+                                <button type="button" class=" btn btn-success border btn-sm ms-2" id="saveName"
+                                    data-bs-dismiss="modal">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4 col-md-2 col-xl-1">
+                    <!-- About -->
+                    <div id="modalAbout" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title mt-0" id="myModalLabel">About</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        In this online chat you can communicate with people and create group as well as
+                                        channels. This is totally free and there is not any adds, so
+                                        you can enjoy using this.
+                                    </p>
+                                    <div style="text-align: center;">
+                                        <b style="font-size: larger; color: darkgreen">Developer:</b><br>
+                                        <h4 style="text-align: center; font-family: 'Times New Roman', Times, serif;">
+                                            Trichat team</h4>
+                                    </div>
+                                    <p>If you have any question or offer you can contact the following team members:</p>
+
+                                    <ul class="list-unstyled" style="font-weight: bolder; color: brown;">
+                                        <li>
+                                            <div>
+                                                <span style="color: black;">1: </span>
+                                                Asadbek Shariyorov
+                                            </div>
+                                            <div>
+                                                <span style="color: black;">Email: </span>
+                                                asadbekshariyorov@gmail.com
+                                            </div>
+
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+
+                    <!-- Chang profile photo -->
+
+                    <div class="modal fade bs-example-modal-center" tabindex="-1" aria-hidden="false"
+                        id="modalProfilePhoto">
+                        <div class="modal-dialog-centered modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" data-bs-target="#myModal" data-bs-toggle="modal"
+                                        data-bs-dismiss="modal" style="border: 0px; background-color: white;"><i
+                                            class="bi bi-arrow-left align-middle ri-2x"></i></button>
+                                    <button type="button" id="btnClosePhoto" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <label for="profilePhot">
+                                            <input class="form-control" id="profilePhot" type="file" accept="image/*">
+                                        </label>
+                                        <button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal"
+                                            onclick="updatePhoto()">set</button>
                                     </form>
                                 </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+
+                    <!-- modal groups -->
+                    <div class="modal fade" id="groups" data-bs-keyboard="false" tabindex="-1" role="dialog"
+                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title ms-1" style="color: darkgreen;" id="staticBackdropLabel">
+                                        Groups</h5>
+                                    <form class="app-search d-lg-block ms-lg-5 ms-sm-2">
+                                        <div class="position-relative">
+                                            <input type="text" class="form-control"
+                                                placeholder="<%=translation.Search%>" id="searchGroup">
+                                            <span class="ri-search-line"></span>
+                                        </div>
+                                    </form>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                        id="modal_close_group"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="list-group myScroll" id="groupsBody" style="overflow-y: auto; max-height: 500px;">
+                                    </div>
+                                </div>
+                                <ul class="sub-menu list-unstyled mx-0 mt-0" aria-expanded="false">
+                                    <li><a href="#newgroup" data-bs-toggle="modal"
+                                            style="color: darkgreen; font-size:110%; margin-left: 20px;"
+                                            onclick="newGroup()">
+                                            <i class="ri-add-line ri-2x align-middle"></i>
+                                            <b>New Group</b></a>
+                                    </li>
+                                </ul>
                             </div>
-                        </li>
-                        <li class="d-none d-sm-inline-block">
-                            <div class="search-box me-2">
-                                <div class="position-relative" id="search" hidden>
-                                    <input type="text" class="form-control" placeholder="Search...">
-                                    <i class="mdi mdi-magnify search-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="newgroup" data-bs-keyboard="false" tabindex="-1" role="dialog"
+                        aria-hidden="true">
+                        <div class="modal-dialog" style="margin-top: 12%; width: 26%;" role="document">
+                            <div class="modal-content">
+                                <div class="modal-body"
+                                    style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
+                                    <form style="color: darkgreen;">
+                                        <label class="form-label" for="groupName" id="groupNameLabel">
+                                            Group Name
+                                            <input class="form-control" id="groupName" type="text"
+                                                style="border: 0px; border-bottom: 2px solid darkgreen; border-radius: 0px; margin-top: 1xp; color: black; font-weight: bolder;">
+                                        </label>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" id="closeModalgr" class="btn btn-light waves-effect"
+                                        style="border: 0px; color: darkred; font-weight: bolder;"
+                                        data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-light waves-effect waves-light"
+                                        style="border: 0px; color: darkgreen; font-weight: bolder;"
+                                        onclick="selectContacts()" id="nextBtn">Next</button>
                                 </div>
                             </div>
-                        </li>
-                        <li class="list-inline-item m-0 d-sm-inline-block">
-                            <div class="dropdown"  id="params" hidden>
-                                <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="mdi mdi-dots-horizontal"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-end" id="dropdownMenu"> 
-                                    <a class="dropdown-item" href="#toUserProfile" data-bs-toggle="modal">View Profile</a>
-                                    <a class="dropdown-item" href="javascript:void(0);" onclick="clearChat()">Clear chat</a>
-                                </div>
-                            </div>
-                        </li>
-                        
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="px-lg-2">
-            <div class="chat-conversation p-3" style="overflow-y: scroll; max-height: 500px; min-height: 500px;" id="chat_area">
-                <ul class="list-unstyled mb-0 pe-3" id="messageList">    
-                    <h1 class="display-6" style="margin-top: 20%; text-align: center;">Chat messages will be displayed here after you start typing!</h1>
-                </ul>
-            </div>
-            
-        </div>
-        <div class="px-lg-3">
-            <div class="p-3 chat-input-section">
-                   <form>
-                    <div class="row" id="enterMessage">
-                    </div>
-                   </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="col-sm-6 col-md-4 col-xl-3">
-    <!-- Modal user profile -->
-    <div class="modal fade" id="myModal" data-bs-keyboard="false" tabindex="0" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">My Account</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="row no-gutters align-items-center border bg-white border-warning"  id="userProfileCard">
-                            </div>
                         </div>
                     </div>
-            
-                    <div class="row">
-                        <div class="col-12">
-                            <a href="#modalProfilePhoto" data-bs-toggle="modal" data-bs-dismiss="modal" class="text-dark ms-4">
-                                <i class="ri-image-add-fill align-middle me-1 ri-lg text-success"></i>
-                                <span>Change Profile Photo</span>
-                            </a>
-                        </div>
-                        <div class="col-12 mt-2">
-                            <a href="#modalUsername" data-bs-toggle="modal" data-bs-dismiss="modal" class="text-dark ms-4">
-                                <i class="ri-pencil-line align-middle me-1 ri-lg text-success"></i>
-                                <span>Change Name</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-        </div>
-        
-    </div>
-        <!-- Modal contacts-->
-    <div class="modal fade" id="contacts" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="color: darkgreen;" id="staticBackdropLabel">Contacts</h5>
-                    <form class="app-search d-lg-block ms-lg-5 ms-sm-2">
-                        <div class="position-relative">
-                            <input type="text" class="form-control" placeholder="<%=translation.Search%>" id="searchContact">
-                            <span class="ri-search-line"></span>
-                        </div>
-                    </form>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="modal_close_contact"></button>
-                </div>
-                <div class="modal-body" style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
-                    <div class="list-group" id="modal_body_group">
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
-
-    <!-- toUser profile  -->
-
-    <div class="modal fade" id="toUserProfile" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="row no-gutters align-items-center border bg-white border-success">
-                                <div class="col-md-4 " id="toUserPhoto">
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body" id="cardBody">
+                    <!-- select contacts -->
+                    <div class="modal fade" id="selectContacts" data-bs-keyboard="false" tabindex="-1" role="dialog"
+                        aria-hidden="true">
+                        <div class="row">
+                            <div class="modal-dialog col-sm-6 col-lg-2 col-md-4 col-12" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h6 class="modal-title" style="color: darkgreen;">All Users</h6>
+                                        <form class="app-search d-lg-block ms-1">
+                                            <div class="position-relative">
+                                                <input type="text" class="form-control"
+                                                    placeholder="<%=translation.Search%>" id="searchContact">
+                                                <span class="ri-search-line"></span>
+                                            </div>
+                                        </form>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close" id="modal_close_contact"></button>
+                                    </div>
+                                    <div class="modal-body"
+                                        style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
+                                        <div class="list-group" id="select_group_users">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" id="closeModalLast" class="btn btn-light waves-effect"
+                                            style="border: 0px; color: darkred; font-weight: bolder;"
+                                            data-bs-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn btn-light waves-effect waves-light"
+                                            style="border: 0px; color: darkgreen; font-weight: bolder;"
+                                            onclick="createGroup()" id="creategroup">Create</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        
-    </div>
-</div>
 
-<div class="col-sm-4 col-md-2 col-xl-1">
+                    <!-- group profile -->
 
-    <!-- edit name -->
-    <div class="modal fade bs-example-modal-center" tabindex="-1"  aria-hidden="true"
-     id="modalUsername" style="background-color: rgba(0, 0, 0, .5);">
-        <div class="modal-dialog modal-dialog-centered" style="width: 30%;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" data-bs-target="#myModal" data-bs-toggle="modal" data-bs-dismiss="modal" style="border: 0px; background-color: white;"><i class="bi bi-arrow-left align-middle ri-2x" ></i></button>
-                    <button type="button" id="btnClosePhoto" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <label class="form-label" id="currentName">
-                        </label>
-                        <label class="form-label" for="newName">
-                            New Name:
-                            <input type="text" class="form-control" placeholder="Enter name..." id="newName">
-                        </label>
-                        <button type="button" class=" btn btn-success border btn-sm ms-2" id="saveName" data-bs-dismiss="modal">Save</button>
-                    </form>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
-
-    <!-- About -->
-    <div id="modalAbout" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title mt-0" id="myModalLabel">About</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        In this online chat you can communicate with people and create group as well as channels. This is totally free and there is not any adds, so 
-                        you can enjoy using this.
-                    </p>
-                    <div style="text-align: center;">
-                        <b style="font-size: larger; color: darkgreen">Developer:</b><br>
-                        <h4 style="text-align: center; font-family: 'Times New Roman', Times, serif;">Trichat team</h4>
-                    </div>
-                    <p>If you have any question or offer you can contact the following team members:</p>
-                    
-                    <ul class="list-unstyled" style="font-weight: bolder; color: brown;">
-                        <li>
-                            <div>
-                                <span style="color: black;">1: </span>
-                                Asadbek Shariyorov
-                           </div>
-                            <div>
-                                <span style="color: black;">Email: </span>
-                                 asadbekshariyorov@gmail.com
-                            </div>
-                            
-                        </li>
-                    </ul>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
-
-    <!-- Chang profile photo -->
-
-    <div class="modal fade bs-example-modal-center" tabindex="-1"  aria-hidden="false" id="modalProfilePhoto">
-        <div class="modal-dialog modal-dialog-centered"  style="width: 25%;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" data-bs-target="#myModal" data-bs-toggle="modal" data-bs-dismiss="modal" style="border: 0px; background-color: white;"><i class="bi bi-arrow-left align-middle ri-2x" ></i></button>
-                    <button type="button" id="btnClosePhoto" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                    <label for="profilePhot">
-                        <input class="form-control" id="profilePhot" type="file" accept="image/*">
-                    </label>
-                    <button type="button" class="btn btn-sm btn-success" onclick="updatePhoto()">set</button>
-                    </form>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
-
-   <!-- modal groups -->
-    <div class="modal fade" id="groups" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title ms-1" style="color: darkgreen;" id="staticBackdropLabel">Groups</h5>
-                    <form class="app-search d-lg-block ms-lg-5 ms-sm-2">
-                        <div class="position-relative">
-                            <input type="text" class="form-control" placeholder="<%=translation.Search%>" id="searchGroup">
-                            <span class="ri-search-line"></span>
-                        </div>
-                    </form>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="modal_close_group"></button>
-                </div>
-                <div class="modal-body" style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
-                    <div class="list-group" id="groupsBody">
-                    </div>
-                    <hr>
-                </div>
-                <ul class="sub-menu list-unstyled mx-0 mt-1" aria-expanded="false">             
-                    <li><a href="#newgroup" data-bs-toggle="modal" style="color: darkgreen; font-size:110%; margin-left: 20px;" onclick="newGroup()">
-                        <i class="ri-add-line ri-2x align-middle"></i>
-                        <b>New Group</b></a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="newgroup" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" style="margin-top: 12%; width: 26%;" role="document">
-            <div class="modal-content">
-                <div class="modal-body" style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
-                    <form style="color: darkgreen;">
-                        <label class="form-label" for="groupName" id="groupNameLabel">
-                            Group Name
-                            <input class="form-control" id="groupName" type="text"
-                            style="border: 0px; border-bottom: 2px solid darkgreen; border-radius: 0px; margin-top: 1xp; color: black; font-weight: bolder;">
-                        </label>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="closeModalgr" class="btn btn-light waves-effect" style="border: 0px; color: darkred; font-weight: bolder;" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-light waves-effect waves-light"
-                    style="border: 0px; color: darkgreen; font-weight: bolder;" onclick="selectContacts()" id="nextBtn">Next</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- select contacts -->
-    <div class="modal fade" id="selectContacts" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="row">
-            <div class="modal-dialog col-sm-6 col-lg-2 col-md-4 col-12" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h6 class="modal-title" style="color: darkgreen;">All Users</h6>
-                        <form class="app-search d-lg-block ms-1">
-                            <div class="position-relative">
-                                <input type="text" class="form-control" placeholder="<%=translation.Search%>" id="searchContact">
-                                <span class="ri-search-line"></span>
-                            </div>
-                        </form>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="modal_close_contact"></button>
-                    </div>
-                    <div class="modal-body" style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
-                        <div class="list-group" id="select_group_users">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="closeModalLast" class="btn btn-light waves-effect" style="border: 0px; color: darkred; font-weight: bolder;" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-light waves-effect waves-light"
-                        style="border: 0px; color: darkgreen; font-weight: bolder;" onclick="createGroup()" id="creategroup">Create</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- group profile -->
-
-    <div class="modal fade" id="groupProfile" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" id="btnCloseGroupInfo" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                        <div class="card">
-                            <div class="row no-gutters align-items-center border bg-white p-2">
-                                <div class="col-md-4 " id="groupPhoto">
+                    <div class="modal fade" id="groupProfile" data-bs-keyboard="false" tabindex="-1" role="dialog"
+                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" id="btnCloseGroupInfo" class="btn-close"
+                                        data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="col-md-8">
-                                    <div class="card-body" id="cardBodyGroup">
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <div class="row no-gutters align-items-center border bg-white p-2">
+                                            <div class="col-md-4 " id="groupPhoto">
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="card-body" id="cardBodyGroup">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 mt-3 ms-2 mb-3">
+                                                <a href="#modalProfilePhoto2" data-bs-toggle="modal"
+                                                    data-bs-dismiss="modal" class="text-dark ms-4">
+                                                    <i
+                                                        class="ri-image-add-fill align-middle me-1 ri-lg text-success"></i>
+                                                    <span style="color: green;">Change Group Photo</span>
+                                                </a>
+                                            </div>
+                                            <hr>
+                                            <div class="col-12 mb-2 ms-2">
+                                                <h6 class="mt-1">
+                                                    <i class="ri-group-line ri-lg me-3 ms-2"></i> MEMBERS
+                                                    <a href="#addUser" class="text-success" data-bs-toggle="modal"
+                                                        data-bs-dismiss="modal" onclick="getUsersToAdd()"><i
+                                                            class="bi bi-person-plus fa-2x"
+                                                            style="margin-left:60%;"></i></a>
+                                                </h6>
+                                            </div>
+                                            <div class="list-group col-12"
+                                                style="max-height: 340px; overflow-y: scroll;" id="groupMembers">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-12 mt-3 ms-2 mb-3">
-                                    <a href="#modalProfilePhoto2" data-bs-toggle="modal" data-bs-dismiss="modal" class="text-dark ms-4">
-                                        <i class="ri-image-add-fill align-middle me-1 ri-lg text-success"></i>
-                                        <span style="color: green;">Change Group Photo</span>
-                                    </a>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- group members  -->
+                    <div class="modal fade" id="groupMemberProfile" data-bs-keyboard="false" tabindex="-1" role="dialog"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" data-bs-target="#groupProfile" data-bs-toggle="modal"
+                                        data-bs-dismiss="modal" style="border: 0px; background-color: white;"><i
+                                            class="bi bi-arrow-left align-middle ri-2x"></i></button>
+                                    <button type="button" id="btnCloseGroupMember" class="btn-close"
+                                        data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <hr>
-                                <div class="col-12 mb-2 ms-2">
-                                    <h6 class="mt-1">
-                                        <i class="ri-group-line ri-lg me-3 ms-2"></i> MEMBERS
-                                        <a href="#addUser" class="text-success" data-bs-toggle="modal" data-bs-dismiss="modal" onclick="getUsersToAdd()"><i class="bi bi-person-plus fa-2x" style="margin-left:60%;"></i></a>
-                                    </h6>
-                                </div>
-                                <div class="list-group col-12"  style="max-height: 340px; overflow-y: scroll;" id="groupMembers">
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <div class="row no-gutters align-items-center border bg-white p-2" id="otaDiv">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                </div>
-            </div>
-        </div>
-        
-    </div>
-    <!-- group members  -->
-    <div class="modal fade" id="groupMemberProfile" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" data-bs-target="#groupProfile" data-bs-toggle="modal" data-bs-dismiss="modal" style="border: 0px; background-color: white;"><i class="bi bi-arrow-left align-middle ri-2x" ></i></button>
-                    <button type="button" id="btnCloseGroupMember" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                        <div class="card">
-                            <div class="row no-gutters align-items-center border bg-white p-2" id="otaDiv">                     
+                    </div>
+
+                    <!-- add user to group -->
+                    <div class="modal fade" id="addUser" data-bs-keyboard="false" tabindex="-1" role="dialog"
+                        aria-hidden="true">
+                        <div class="row">
+                            <div class="modal-dialog col-sm-6 col-lg-2 col-md-4 col-12" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h6 class="modal-title" style="color: darkgreen;">Contacts</h6>
+                                        <form class="app-search d-lg-block ms-1">
+                                            <div class="position-relative">
+                                                <input type="text" class="form-control" placeholder="Search..."
+                                                    id="searchAddUsers">
+                                                <span class="ri-search-line"></span>
+                                            </div>
+                                        </form>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body"
+                                        style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
+                                        <div class="list-group" id="add_users_group">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light waves-effect"
+                                            style="border: 0px; color: darkred; font-weight: bolder;"
+                                            data-bs-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn btn-light waves-effect waves-light"
+                                            style="border: 0px; color: darkgreen; font-weight: bolder;"
+                                            onclick="addMember()" data-bs-dismiss="modal">Add</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="modal fade bs-example-modal-center" tabindex="-1" aria-hidden="true"
+                        id="modalProfilePhoto2">
+                        <div class="modal-dialog modal-dialog-centered" style="width: 25%;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" data-bs-target="#groupProfile" data-bs-toggle="modal"
+                                        data-bs-dismiss="modal" style="border: 0px; background-color: white;"><i
+                                            class="bi bi-arrow-left align-middle ri-2x"></i></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <label for="groupProfilePhoto">
+                                            <input class="form-control" id="groupProfilePhoto" type="file"
+                                                accept="image/*">
+                                        </label>
+                                        <button type="button" data-bs-dismiss="modal" class="btn btn-sm btn-success"
+                                            onclick="updateGroupPhoto()">set</button>
+                                    </form>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- add user to group -->
-    <div class="modal fade" id="addUser" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="row">
-            <div class="modal-dialog col-sm-6 col-lg-2 col-md-4 col-12" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h6 class="modal-title" style="color: darkgreen;">Contacts</h6>
-                        <form class="app-search d-lg-block ms-1">
-                            <div class="position-relative">
-                                <input type="text" class="form-control" placeholder="Search..." id="searchAddUsers">
-                                <span class="ri-search-line"></span>
-                            </div>
-                        </form>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body" style="overflow-y: auto; max-height: 500px; scrollbar-width: thin;">
-                        <div class="list-group" id="add_users_group">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light waves-effect" style="border: 0px; color: darkred; font-weight: bolder;" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-light waves-effect waves-light" style="border: 0px; color: darkgreen; font-weight: bolder;" 
-                        onclick="addMember()" data-bs-dismiss="modal">Add</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+            <%- contentFor('FooterJs') %>
+                <!-- Sweet Alerts js -->
+                <script src="public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
 
-    <div class="modal fade bs-example-modal-center" tabindex="-1"  aria-hidden="true" id="modalProfilePhoto2">
-        <div class="modal-dialog modal-dialog-centered"  style="width: 25%;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" data-bs-target="#groupProfile" data-bs-toggle="modal" data-bs-dismiss="modal" style="border: 0px; background-color: white;"><i class="bi bi-arrow-left align-middle ri-2x" ></i></button>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <label for="groupProfilePhoto">
-                            <input class="form-control" id="groupProfilePhoto" type="file" accept="image/*">
-                        </label>
-                        <button type="button" data-bs-dismiss="modal" class="btn btn-sm btn-success" onclick="updateGroupPhoto()">set</button>
-                    </form>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
-
-</div>
-
-<%- contentFor('FooterJs') %>
-<!-- Sweet Alerts js -->
-<script src="public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
-
-<!-- Sweet alert init js-->
-<script src="public/assets/js/pages/sweet-alerts.init.js"></script>
-<%- contentFor('BottomJs') %>
+                <!-- Sweet alert init js-->
+                <script src="public/assets/js/pages/sweet-alerts.init.js"></script>
+                <%- contentFor('BottomJs') %>

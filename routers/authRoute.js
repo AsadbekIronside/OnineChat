@@ -33,8 +33,6 @@ module.exports = function (app) {
 	app.post('/post-forgot-password', urlencodeParser, authController.post_forgot_password);
 
 	app.get('/logout', authController.logout);
-     
-	app.get('/delete-user', urlencodeParser, isUserAllowed, authController.deleteUser);
 
 	//// page-unlock
 	app.post('/page-unlock', urlencodeParser, isUserAllowed, authController.page_unlock);

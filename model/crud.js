@@ -4,6 +4,11 @@ const users = 'tb_users';
 const groups = 'tb_groups';
 const groupMessages = 'tb_group_messages';
 
+
+const deleteUser = async(userId)=>{
+    return await knex(users).update({user_status:0, delete_time:new Date()}).where('user_id', '=', userId);
+}
+
 const postMessages = async (data) => {
     await knex.raw(
         `INSERT INTO tb_messages(from_user_id, to_user_id, message, create_time)VALUES(${data.from_user_id}, 
@@ -182,7 +187,14 @@ const updateGroupPhoto = async(id, photo)=>{
     });
 }
 
+const getGroupMember = async (user_id) => {
+    return await knex(users).select(['user_id', 'username', 'account_name', 'profile_photo', 'user_status'])
+        .where('user_id', '=', user_id);
+}
+
+
 module.exports = {
+    deleteUser,
     postMessages,
     getMessages,
     getMessagesUserRelated,
@@ -201,6 +213,7 @@ module.exports = {
     postGroupMessages,
     updateGroupUsers,
     deleteGroup,
-    updateGroupPhoto
+    updateGroupPhoto,
+    getGroupMember
 };
 

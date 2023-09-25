@@ -1,7 +1,7 @@
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 ///////  crud user
-var { post_user, get_user, delete_user, getAllPasswords, find_user_password, check_username_exists,
+var { post_user, get_user, getAllPasswords, find_user_password, check_username_exists,
      get_password} = require('../model/auth_crud');
 
 const pages_login = (req, res)=>{
@@ -106,13 +106,6 @@ const page_unlock = async(req, res)=>{
     }
 }
 
-const deleteUser = async(req, res)=>{
-    await delete_user(req.session.user.user_id);
-    req.session.user = null;
-    
-    res.redirect('/login');
-}
-
 const post_register =  async(req, res)=>{
  
     try {
@@ -166,7 +159,6 @@ module.exports = {
     post_login,
     post_forgot_password,
     page_unlock,
-    deleteUser,
     post_register,
 	pages_login,
 	pages_register,

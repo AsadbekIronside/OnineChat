@@ -18,10 +18,6 @@ const get_password = async(username)=>{
     return await knex('tb_users').select(['password', 'user_id', 'username']).where('username', '=', username).andWhere('user_status', '=', '1');
 }
 
-const delete_user = async(userId)=>{
-    return await knex('tb_users').where({user_id:userId}).update({user_status:0, delete_time:new Date()});
-}
-
 const getAllPasswords = async()=>{
     return await knex('tb_users').select('password').where('user_status', '=', '1');
 }
@@ -37,7 +33,6 @@ const find_user_password = async(user_id)=>{
 module.exports = {
     post_user,
     get_user,
-    delete_user,
     getAllPasswords,
     check_username_exists,
     find_user_password,

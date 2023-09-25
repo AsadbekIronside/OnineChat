@@ -30,38 +30,7 @@ File: Sweetalert Js File
             )
         });
 
-        //Warning Message
-
-        $('#deleteAccount').click(function () {
-            Swal.fire({
-                title: "Do you want to delete your account?",
-                showCancelButton: true,
-                confirmButtonColor: "#1cbb8c",
-                cancelButtonColor: "#ff3d60",
-                confirmButtonText: "Yes",
-              }).then(function (result) {
-                if (result.value) {
-                    
-                    Swal.fire({
-                        title: "Are you sure?",
-                        text: "You won't be able to revert this!",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#1cbb8c",
-                        cancelButtonColor: "#ff3d60",
-                        confirmButtonText: "Yes, delete it!"
-                      }).then(async function (result) {
-                        if (result.value) {
-
-                            await fetch('/delete-user');
-
-                        }
-                    });
-
-                }
-            });
-        });
-  
+        //Warning Messag
 
 
         //Custom Image

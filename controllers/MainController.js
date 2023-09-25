@@ -2,8 +2,17 @@
 const { postMessages, getMessages, getUser, clearChat, getOnesTypedUser, getOnesUserTyped, getMessageById,
         updateAccountName, updateProfilePhoto, getAllUsers, createGroup, getMessagesUserRelated,
         getAllGroups, getGroupById, getGroupMessages, postGroupMessages, updateGroupUsers, deleteGroup,
-        updateGroupPhoto } 
-    = require('../model/crud');
+        updateGroupPhoto, deleteUser, getGroupMember } 
+     = require('../model/crud');
+
+    // delete user
+const delete_user = async(req, res)=>{
+    let result = await deleteUser(req.session.user.user_id);
+    req.session.user = null;
+     // res.json({result:result});
+	res.redirect('/login');
+
+}
 
 const get_main_page = async (req, res) => {
     res.locals = { title: 'chat' };
@@ -14,7 +23,7 @@ const get_main_page = async (req, res) => {
 const post_messages = async (req, res) => {
     try {
         let toUser = parseInt(req.body.to_user_id);
-        console.log('to_user_id = '+toUser);
+        // console.log('to_user_id = '+toUser);
         const data = {
             from_user_id: req.session.user.user_id, to_user_id:toUser ,
             message: req.body.message, create_time: req.body.createTime
@@ -27,14 +36,26 @@ const post_messages = async (req, res) => {
 
 const get_messages = async (req, res) => {
 
-    let count = parseInt(req.query.count);
-    // console.log(count);
-    let to_user_id = parseInt(req.query.toUserId);
-
-    let get_user = await getUser(to_user_id);
-    let data = await getMessages(count, req.session.user.user_id, to_user_id);
-    return res.json({ array: data, to_user_info: get_user[0] });
-
+    try {
+        let count = parseInt(req.query.count);
+        // console.log(count);
+        let to_user_id = parseInt(req.query.toUserId);
+    
+        var get_user = await getGroupMember(to_user_id);
+        let data = await getMessages(count, req.session.user.user_id, to_user_id);
+    
+        get_user = get_user[0];
+    
+        if(get_user.user_status === 0){
+            get_user.account_name = "Deleted Account";
+            get_user.profile_photo = 'yellow.jpg';
+        }
+    
+        return res.json({ array: data, to_user_info: get_user });
+    
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 const get_contacts = async (req, res) => {
@@ -85,7 +106,6 @@ const get_contacts = async (req, res) => {
 const get_chats = async (req, res) => {
 
    try {
-
         var current_user = req.session.user.user_id;
         var userTyped = await getOnesUserTyped(current_user);
         var typedUser = await getOnesTypedUser(current_user);
@@ -111,7 +131,7 @@ const get_chats = async (req, res) => {
 
         }else if(typedUser.length > 0 && userTyped.length === 0){
             for(let i=0; i < typedUser.length; i++){
-                let getUserInfo = await getUser(typedUser[i].user_id);
+                let getUserInfo = await getUser(typedUser[i].from_user_id);
                 // console.log(getUserInfo);
                 let message = await getMessageById(typedUser[i].message_id);
                 finalResult.push({
@@ -165,26 +185,53 @@ const get_chats = async (req, res) => {
             }
     
             for(let i=0; i < result2.length; i++){
-                let getUserInfo = await getUser(result2[i].user_id);
+                var getUserInfo = await getGroupMember(result2[i].user_id);
                 // console.log(getUserInfo);
-                let message = await getMessageById(result2[i].message_id);
-                finalResult.push({
-                    user_id: getUserInfo[0].user_id,
-                    account_name: getUserInfo[0].account_name,
-                    profile_photo: getUserInfo[0].profile_photo,
-                    message: message[0].message,
-                    create_time: message[0].create_time
-                });
+                var message = await getMessageById(result2[i].message_id);
+                var obj;
+
+                if(getUserInfo[0].user_status === 0){
+                    obj = {
+                        user_id: getUserInfo[0].user_id,
+                        account_name: "Deleted Account",
+                        profile_photo: "yellow.jpg",
+                        message: message[0].message,
+                        create_time: message[0].create_time
+                    }
+                }else{
+                    obj = {
+                        user_id: getUserInfo[0].user_id,
+                        account_name: getUserInfo[0].account_name,
+                        profile_photo: getUserInfo[0].profile_photo,
+                        message: message[0].message,
+                        create_time: message[0].create_time
+                    };
+                }
+
+                finalResult.push(obj);
             }
             // console.log("result2 = "+result2);
     
             for(let i=0; i < result.length; i++ ){
-                let getUserInfo = await getUser(result[i]);
-                finalResult.push({
-                    user_id: getUserInfo[0].user_id,
-                    account_name: getUserInfo[0].account_name,
-                    profile_photo: getUserInfo[0].profile_photo
-                });
+                var getUserInfo = await getGroupMember(result[i]);
+                var obj;
+                getUserInfo = getUserInfo[0];
+
+                if(getUserInfo.user_status === 0){
+                    obj = {
+                        user_id: getUserInfo.user_id,
+                        account_name: "Deleted Account",
+                        profile_photo: "yellow.jpg"
+                    }
+                }else{
+                    obj = {
+                        user_id: getUserInfo.user_id,
+                        account_name: getUserInfo.account_name,
+                        profile_photo: getUserInfo.profile_photo
+                    }
+                }
+                
+                finalResult.push(obj);
             }
             // console.log('result = '+result);
             // console.log('finalResult = '+finalResult);
@@ -199,9 +246,20 @@ const get_chats = async (req, res) => {
 }
 
 const start_chat = async (req, res) => {
-    const user_id = req.query.userId;
-    const user = await getUser(user_id);
-    res.json(user[0]);
+
+    try {
+        var user_id = req.query.userId;
+        var user = await getGroupMember(user_id);
+        user = user[0];
+    
+        if(user.user_status === 0){
+            user.account_name = "Deleted Account";
+            user.profile_photo = 'yellow.jpg';
+        }
+        res.json(user);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 const clear_chat = async (req, res) => {
@@ -226,6 +284,17 @@ const get_unreplied = async (req, res) => {
 
         var userTypedMap = new Map();
         var typedUserMap = new Map();
+        var resultUsers = [];
+        var resultMessages = [];
+        
+        var obj;
+        var finalResult = [];
+        var message;
+        var user;
+        
+        if(typedUserList.length === 0){
+            return res.json({ result: finalResult });
+        }
 
         userTypedList.forEach((element) => {
             userTypedMap.set(element.to_user_id, element.message_id);   ///[2, 5], [5, 98]
@@ -235,9 +304,6 @@ const get_unreplied = async (req, res) => {
             typedUserMap.set(element.from_user_id, element.message_id); ////[2, 9], [3, 87]
         });
 
-        var resultUsers = [];
-        var resultMessages = [];
-
         Array.from(typedUserMap.keys()).forEach((el) => {
 
             if (!userTypedMap.has(el) || (userTypedMap.get(el) < typedUserMap.get(el))) {
@@ -246,11 +312,6 @@ const get_unreplied = async (req, res) => {
             }
 
         });
-
-        var obj;
-        var finalResult = [];
-        var message;
-        var user;
 
         for (let i = 0; i < resultUsers.length; i++) {
 
@@ -262,11 +323,13 @@ const get_unreplied = async (req, res) => {
             user = user[0];
             message = message[0];
 
-            obj = {
-                user_id: user.user_id, username: user.username, account_name: user.account_name,
-                profile_photo: user.profile_photo, message: message.message, create_time: message.create_time
-            };
-            finalResult.push(obj);
+            if(user){
+                obj = {
+                    user_id: user.user_id, username: user.username, account_name: user.account_name,
+                    profile_photo: user.profile_photo, message: message.message, create_time: message.create_time
+                };
+                finalResult.push(obj);
+            }
 
         }
 
@@ -374,9 +437,16 @@ const show_member_profile = async (req, res)=>{
         if(userId === req.session.user.user_id)
             return res.json({result: false});
 
-        let userInfo = await getUser(userId);
+        var userInfo = await getGroupMember(userId);
+        userInfo = userInfo[0];
+        
+        if(userInfo.user_status === 0){
+            userInfo.account_name = 'Deleted Account';
+            userInfo.profile_photo = 'yellow.jpg';
+            return res.json({result:userInfo});
+        }
 
-        res.json({result:userInfo[0]});
+        res.json({result:userInfo});
 
     } catch (error) {
         console.log(error);
@@ -399,7 +469,14 @@ const get_group_members = async (req, res)=>{
     
         for(let i=0; i < array.length; i++){
             userInfo = await getUser(array[i]);
-            finalResult.push(userInfo[0]);
+            if(userInfo[0])
+                finalResult.push(userInfo[0]);
+            else
+                finalResult.push({
+                    user_id:array[i],
+                    account_name:'Deleted Account',
+                    profile_photo:'yellow.jpg'
+                });
         }
 
         var ownerInfo = false;
@@ -407,10 +484,16 @@ const get_group_members = async (req, res)=>{
         if(owner>0){
                 
             ownerInfo = await getUser(owner);
-            ownerInfo = ownerInfo[0];
+            if(ownerInfo[0])
+                ownerInfo = ownerInfo[0];
+            else    
+                ownerInfo = {
+                    user_id: owner,
+                    account_name:'Deleted Account',
+                    profile_photo:'yellow.jpg'
+                }
 
         }
-
         // console.log('finalResult = '+finalResult);
         // console.log('ownerInfo = '+ownerInfo);
         
@@ -653,5 +736,5 @@ module.exports = {
     leave_group, delete_group,
     show_member_profile, get_users_to_add,
     add_users_to_group, get_group_members_info,
-    update_group_photo
-}
+    update_group_photo, delete_user
+}   

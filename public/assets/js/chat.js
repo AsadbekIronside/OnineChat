@@ -207,10 +207,10 @@ const add_contacts = async (user) => {
             id="a${user.user_id}">
                 <div class="card m-0">
                 <div class="row no-gutters align-items-center">
-                    <div class="col-md-4">
+                    <div class="col-5 col-sm-4">
                     <img src="public/assets/uploadImages/${user.profile_photo}" class="rounded-circle ms-3" style="height:80px; width:80px;">
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-7 col-sm-8">
                         <div class="card-body">
                         <h6 class="fw-bolder">${user.account_name}</h6><small class="fw-bolder text-primary">@${user.username}</small>
                         </div>
@@ -463,7 +463,7 @@ const start_chat = async (userId) => {
     $('#cardBody').append(cardBody);
 
     $('#toUserPhoto').html('');
-    $('#toUserPhoto').append(`<img class="card-img img-fluid rounded-circle img-thumbnail" style="object-fit: cover;" src="public/assets/uploadImages/${response.profile_photo}" alt="Card image">`);
+    $('#toUserPhoto').append(`<img class="card-img img-fluid rounded-circle img-thumbnail" style="object-fit: cover; height:140px; width:140px" src="public/assets/uploadImages/${response.profile_photo}" alt="Card image">`);
 
     document.getElementById('search').removeAttribute('hidden');
     document.getElementById('params').removeAttribute('hidden');
@@ -586,18 +586,17 @@ const get_unreplied = async () => {
 
     $('#notifGroup').html('');
     resultUnrep = '';
-    await fetch('/get-unreplied')
+    var response = await fetch('/get-unreplied')
         .then(response => response.json())
-        .then(data => {
-            data.result.forEach(user => add_unreplied(user));
-            $('#notifGroup').append(resultUnrep);
+        .then(data => data.result);
 
-            if (data.result.length > 0) {
-                document.querySelector('.noti-dot').removeAttribute('hidden');
-            } else {
-                document.querySelector('.noti-dot').setAttribute('hidden', true);
-            }
-        });
+    if(response.length > 0){
+        response.forEach(user => add_unreplied(user));
+        $('#notifGroup').append(resultUnrep);
+        document.querySelector('.noti-dot').removeAttribute('hidden');
+    }
+    else    
+        document.querySelector('.noti-dot').setAttribute('hidden', true);
 }
 
 $(document).ready(async () => {
@@ -806,6 +805,8 @@ const getGroups = async()=>{
         return;
     }
 
+    sessionStorage.removeItem('groups');
+    sessionStorage.setItem('groups', JSON.stringify({groups:result}));
     // console.log('groups = '+result);
     result.forEach((group)=>{
         add_groups(group);
@@ -824,10 +825,10 @@ const add_groups = (group)=>{
             id="g${group.id}">
                 <div class="card m-0">
                     <div class="row no-gutters align-items-center">
-                        <div class="col-md-4">
+                        <div class="col-5 col-sm-4">
                         <img src="public/assets/groupImages/${group.photo}" class="rounded-circle img-thumbnail ms-3" style="height:80px; width:80px">
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-7 col-sm-8">
                             <div class="card-body">
                             <h6 class="fw-bolder">${group.name}</h6>
                             </div>
@@ -838,6 +839,30 @@ const add_groups = (group)=>{
 
     groupResult+=groupTemp;
 }
+
+$('#searchGroup').keyup(async function (e) { 
+
+    e.preventDefault();
+    var groups = JSON.parse(sessionStorage.getItem('groups')).groups;
+    var val = $('#searchGroup').val();
+
+    if(!val){
+        await getGroups();
+        return;
+    }
+
+    // console.log('val = '+val);
+    for(let i = 0; i < groups.length; i++){
+        if(!groups[i].name.toLowerCase().includes(val.toLowerCase())){
+
+            $('#g'+groups[i].id).remove();
+            groups.splice(i, 1);
+            sessionStorage.removeItem('groups');
+            sessionStorage.setItem('groups', JSON.stringify({groups: groups}));
+        }
+    }
+
+});
 
 var membersTemp;
 
@@ -898,7 +923,7 @@ const start_new_group = async(id)=>{
     // console.log('members = '+members[0]);
     // console.log(typeof owner);
 
-    if(!members){
+    if(members.length ===0 ){
         console.log('members = '+members);
         return;
     }
@@ -1007,7 +1032,7 @@ const show_member_profile = async(userId)=>{
 
     let userProfile =
         `<div class="col-md-4">
-            <img class="card-img rounded-circle img-thumbnail" style="background-position: center; height: 100%; width: 100%; object-fit: cover;"
+            <img class="card-img rounded-circle img-thumbnail" style="background-position: center; height: 130px; width: 130px; object-fit: cover;"
             src="public/assets/uploadImages/${user.profile_photo}" alt="Card image" id="userProf">
         </div>
         <div class="col-md-8 mb-1">

@@ -50,6 +50,8 @@ module.exports = function (app) {
       //       console.log(req.body.profile_photo);
       // });
 
+      app.get('/delete-user', isUserAllowed, mainController.delete_user);
+
       app.post('/post-messages', isUserAllowed, mainController.post_messages);
       app.get('/get-messages', isUserAllowed, mainController.get_messages);
       app.get('/get-contacts', isUserAllowed, mainController.get_contacts);
