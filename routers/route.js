@@ -56,6 +56,9 @@ module.exports = function (app) {
       app.get('/get-messages', isUserAllowed, mainController.get_messages);
       app.get('/get-contacts', isUserAllowed, mainController.get_contacts);
       app.get('/get-chats', isUserAllowed, mainController.get_chats);
+      app.get('/delete-message', isUserAllowed, mainController.delete_message);
+      app.get('/get-edit-message', isUserAllowed, mainController.get_edit_message);
+      app.post('/edit-message', isUserAllowed, mainController.edit_message);
 
       app.get('/start-chat', isUserAllowed, mainController.start_chat);
       app.get('/clear-chat', isUserAllowed, mainController.clear_chat);
@@ -84,6 +87,10 @@ module.exports = function (app) {
       /////group messages
 
       app.get('/get-group-messages', isUserAllowed, mainController.get_group_messages);
+      app.get('/delete-group-message', isUserAllowed, mainController.delete_group_mess);
+      app.get('/get-group-edit-message', isUserAllowed, mainController.get_group_edit_mess);
+      
       app.post('/post-group-messages', isUserAllowed, mainController.post_group_messages);
+      app.post('/edit-group-message', isUserAllowed, mainController.edit_group_mess);
       
 }

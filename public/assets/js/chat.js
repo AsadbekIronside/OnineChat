@@ -100,18 +100,19 @@ function addMessage(message, to_user_info) {
 
 
     if (message.from_user_id !== to_user_info.user_id) {
-        temp += ` <li class="right">
+        temp += ` <li class="right" id="message${message.message_id}">
                         <div class="conversation-list">
                             <div class="ctext-wrap">
                                 <div class="ctext-wrap-content">
-                                    <p class="mb-0">${message.message}</p>
+                                    <p class="mb-0" id="mess${message.message_id}">${message.message}</p>
                                     <div class="btn-group dropstart" style="position:absolute; bottom:26px; margin-left:15px;">
                                             <a class="dropdown-toggle" data-bs-toggle="dropdown" data-toggle="dropdown">
                                             <i class="ri-more-2-fill ri-lg"></i>
                                             </a>
-                                        <div class="dropdown-menu" style="position:absolute; right: 0px; top:10px; width:10px !important;">
-                                            <a class="dropdown-item" href="#"><i class="ri-pencil-fill"></i></a>
-                                            <a class="dropdown-item" href="#"><i class="ri-delete-bin-7-fill"></i></a>
+                                        <div class="dropdown-menu" style="position:absolute; min-width:0.3rem;">
+                                            <a class="dropdown-item" style="padding:0.3rem 1.2rem;" href="#editMessage" data-bs-toggle="modal"
+                                             onclick="edit_message(${message.message_id})"><i class="ri-pencil-fill"></i></a>
+                                            <a class="dropdown-item" style="padding:0.3rem 1.2rem;" href="#" onclick="delete_message(${message.message_id })"><i class="ri-delete-bin-7-fill"></i></a>
                                         </div>
                                     </div>
                                 </div>
@@ -181,6 +182,81 @@ async function getMessages(to_user_id) {
         // console.log('zzzzzzzzzzzzzzzzzzzzz=' + count);
         messageList.forEach((element) => {
             addMessage(element, to_user_info);
+        });
+    }
+}
+
+const delete_message = async(id) => {
+    let result = await fetch('/delete-message?id='+id)
+    .then(response => response.json())
+    .then(response => response.result)
+    .catch(err => {console.log(err);});
+
+    if(result){
+        $('#message'+id).remove();
+        Swal.fire({
+            title: 'Deleted!',
+            icon: 'success'
+          });
+    }else{
+        Swal.fire({
+            title: 'Failed!',
+            text: 'Unknown error occured.',
+            icon: 'error'
+          })
+    }
+    
+}
+
+const edit_message = async (id) => {
+    
+    let mess = await fetch('/get-edit-message?id='+id)
+    .then(response => response.json())
+    .then(response => response.result)
+    .catch(err => {console.log(err);})
+    
+    // console.log(mess);
+    if(mess){
+
+        $('#updateMessage').val(mess.message);
+        $('#sendEditMess').click(async ()=>{
+
+            var message = $('#updateMessage').val();
+
+            if(message.localeCompare(mess.message) !== 0){
+
+                var result = await fetch ('/edit-message?id='+id, {
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({mess: message})
+                })
+                .then(response => response.json())
+                .then(response => response.result)
+                .catch(err => {console.log(err);});
+
+                if(result){
+                    Swal.fire({
+                        title: 'Edited!',
+                        icon: 'success'
+                      });
+                      $('#mess'+mess.message_id).html(message);
+                }else{
+                    Swal.fire({
+                        title: 'Failed!',
+                        text: 'Unknown error occured.',
+                        icon: 'error'
+                      })
+                }
+
+            }
+
+        });
+
+        $('#updateMessage').keypress((event) => { 
+            if(event.key === 'Enter'){
+                event.preventDefault();
+                $('#sendEditMess').click();
+            }
         });
     }
 }
@@ -1062,7 +1138,7 @@ const get_group_messages = async(groupId)=>{
     .catch(err =>{ console.log(err);});
 
     if(!messages.result){
-        console.log('messages = '+messages);
+        // console.log('messages = '+messages);
         return;
     }
     countMessage = messages.result[messages.result.length-1].id;
@@ -1172,18 +1248,20 @@ const add_group_messages = (message, current_user_id)=>{
     // console.log(current_user_id);
 
     if (message.user_id === current_user_id) {
-        temp += ` <li class="right">
+        temp += ` <li class="right" id="grmess${message.id}">
                         <div class="conversation-list">
                             <div class="ctext-wrap">
                                 <div class="ctext-wrap-content">
-                                    <p class="mb-0">${message.message}</p>
+                                    <p class="mb-0" id="grmessage${message.id}">${message.message}</p>
                                     <div class="btn-group dropstart" style="position:absolute; rigtht:0; bottom:26px; margin-left:15px;">
                                             <a class="dropdown-toggle" data-bs-toggle="dropdown" data-toggle="dropdown">
                                             <i class="ri-more-2-fill ri-lg"></i>
                                             </a>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="#"><i class="ri-pencil-fill"></i></a>
-                                            <a class="dropdown-item" href="#"><i class="ri-delete-bin-7-fill"></i></a>
+                                        <div class="dropdown-menu" style="position:absolute; min-width:0.3rem;">
+                                            <a class="dropdown-item" style="padding:0.3rem 1.2rem;" href="#editGrMessage" data-bs-toggle="modal"
+                                            onclick="edit_group_message(${message.id})"><i class="ri-pencil-fill"></i></a>
+                                            <a class="dropdown-item" style="padding:0.3rem 1.2rem;" href="#"><i class="ri-delete-bin-7-fill"
+                                            onclick="delete_group_message(${message.id})"></i></a>
                                         </div>
                                     </div>
                                 </div>
@@ -1219,10 +1297,14 @@ const add_group_messages = (message, current_user_id)=>{
 const send_group_messages = async()=>{
 
     let groupId = parseInt(document.getElementById('groupId').innerHTML);
-    console.log(groupId);
+    // console.log(groupId);
     let message = document.getElementById('messageGroup').value;
     document.getElementById('messageGroup').value = '';
     
+    if(!message){
+        return;
+    }
+
     let response = await fetch('/post-group-messages', {
         method:'POST',
         headers:{"Content-Type": "application/json"},

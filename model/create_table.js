@@ -63,7 +63,7 @@ const create_group_messages = async ()=>{
         table.integer('user').notNullable();
         table.integer('group').notNullable();
         table.string('message', 1000).notNullable();
-        table.tinyint('status').nullable();
+        table.tinyint('status').defaultTo(1);
         table.string('create_time').notNullable();
         table.string('delete_time').nullable();
         table.string('update_time').nullable();

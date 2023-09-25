@@ -75,6 +75,27 @@ const getAllUsers = async (user_id) => {
         .where('user_status', '=', '1').andWhere('user_id', '<>', user_id);
 }
 
+const deleteMessage = async (id)=>{
+    return await knex(messages).update({message_status:0, delete_time: new Date()}).where('message_id', '=', id)
+    .then(result => {
+        return true;
+    })
+    .catch(err => {
+        console.log(err);
+        return false;
+    });
+}
+
+const editMessage = async (id, mess) => {
+    return await knex(messages).update({message: mess, update_time: new Date()})
+    .where('message_id', '=', id)
+    .then(result => true)
+    .catch(err => {
+        console.log(err);
+        return false;
+    });
+}
+
 //groups 
 
 const createGroup = async (group) => {
@@ -119,10 +140,11 @@ const getGroupById = async (id)=>{
 }
 
 const getGroupMessages = async(id, count)=>{
-    return await knex(users).select([ 'user_id', 'username', 'account_name', 'profile_photo', 'id', 'message', 'tb_group_messages.create_time'])
+    return await knex(users).select([ 
+        'user_id', 'username', 'account_name', 'profile_photo', 'user_status', 'id', 'message', 'tb_group_messages.create_time AS create_time'])
     .innerJoin(groupMessages, 'tb_group_messages.user', 'tb_users.user_id')
     .where('group', '=', id)
-    .andWhere('user_status', '=', '1')
+    .andWhere('status', '=', 1)
     .andWhere('id', '>', count)
     .then(result => {
         return result;
@@ -192,6 +214,39 @@ const getGroupMember = async (user_id) => {
         .where('user_id', '=', user_id);
 }
 
+const delGroupMess = async (id) => {
+    return await knex(groupMessages).update({status:0, delete_time: new Date()})
+    .where('id', '=', id)
+    .then(result => true)
+    .catch(err => {
+        console.log(err);
+        return false;
+    });
+}
+
+const editGroupMess = async (id, mess) => {
+    return await knex(groupMessages).update({message: mess, update_time: new Date()})
+    .where('id', '=', id)
+    .then(result => true)
+    .catch(err => {
+        console.log(err);
+        return false;
+    });
+}
+
+const getGroupMessById = async(id) => {
+    return await knex(groupMessages).select(['id', 'message', 'create_time'])
+    .where('id', '=', id)
+    .andWhere('status', '=', 1)
+    .then(result => {
+        return result;
+    })
+    .catch(err => {
+        console.log(err);
+        return false;
+    });
+}
+
 
 module.exports = {
     deleteUser,
@@ -200,6 +255,7 @@ module.exports = {
     getMessagesUserRelated,
     getUser,
     clearChat,
+    deleteMessage,
     getOnesTypedUser,
     getOnesUserTyped,
     getMessageById,
@@ -214,6 +270,10 @@ module.exports = {
     updateGroupUsers,
     deleteGroup,
     updateGroupPhoto,
-    getGroupMember
+    getGroupMember,
+    editMessage,
+    delGroupMess,
+    editGroupMess,
+    getGroupMessById
 };
 

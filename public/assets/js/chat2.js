@@ -418,3 +418,79 @@ const updateGroupPhoto = async()=>{
     }
 
 }
+
+////////////// group messages edit and delete
+
+const delete_group_message = async (id)=>{
+    let result = await fetch('/delete-group-message?id='+id)
+    .then(response => response.json())
+    .then(response => response.result)
+    .catch(err => {console.log(err);});
+
+    if(result){
+        $('#grmess'+id).remove();
+        Swal.fire({
+            title: 'Deleted!',
+            icon: 'success'
+          });
+    }else{
+        Swal.fire({
+            title: 'Failed!',
+            text: 'Unknown error occured.',
+            icon: 'error'
+          })
+    }
+}
+
+const edit_group_message = async(id)=>{
+    
+    let mess = await fetch('/get-group-edit-message?id='+id)
+    .then(response => response.json())
+    .then(response => response.result)
+    .catch(err => {console.log(err);})
+    // console.log(mess);
+    if(mess.message){
+
+        $('#updateGrMessage').val(mess.message);
+        $('#sendEditMessGr').click(async ()=>{
+
+            var message = $('#updateGrMessage').val();
+
+            if(message.localeCompare(mess.message) !== 0){
+
+                var result = await fetch ('/edit-group-message?id='+id, {
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({mess: message})
+                })
+                .then(response => response.json())
+                .then(response => response.result)
+                .catch(err => {console.log(err);});
+
+                if(result){
+                    Swal.fire({
+                        title: 'Edited!',
+                        icon: 'success'
+                      });
+                      $('#grmessage'+id).html(message);
+                }else{
+                    Swal.fire({
+                        title: 'Failed!',
+                        text: 'Unknown error occured.',
+                        icon: 'error'
+                      })
+                }
+
+            }
+
+        });
+
+        $('#updateGrMessage').keypress((event) => { 
+            if(event.key === 'Enter'){
+                event.preventDefault();
+                $('#sendEditMessGr').click();
+            }
+        });
+    }
+
+}

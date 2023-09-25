@@ -432,8 +432,7 @@
                                                             style="margin-left:60%;"></i></a>
                                                 </h6>
                                             </div>
-                                            <div class="list-group col-12"
-                                                style="max-height: 340px; overflow-y: scroll;" id="groupMembers">
+                                            <div class="list-group col-12 myScroll" style="max-height: 340px; overflow-y: scroll;" id="groupMembers">
                                             </div>
                                         </div>
                                     </div>
@@ -525,13 +524,59 @@
                         </div><!-- /.modal-dialog -->
                     </div>
 
+                    <!-- edit message -->
+                    <div class="modal fade bs-example-modal-center" role="dialog" id="editMessage">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" id="btnClosePhoto" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <label class="form-label" for="updateMessage">
+                                            Message:
+                                            <input type="text" class="form-control fw-bold text-black" id="updateMessage">
+                                        </label>
+                                        <button type="button" class=" btn btn-success border border-dark btn-sm ms-2" id="sendEditMess"
+                                            data-bs-dismiss="modal">Edit</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- edit group message -->
+                    <div class="modal fade bs-example-modal-center" role="dialog" id="editGrMessage">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" id="btnClosePhoto" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <label class="form-label" for="updateGrMessage">
+                                            Message:
+                                            <input type="text" class="form-control fw-bold text-black" id="updateGrMessage">
+                                        </label>
+                                        <button type="button" class=" btn btn-success border border-dark btn-sm ms-2" id="sendEditMessGr"
+                                            data-bs-dismiss="modal">Edit</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
-            <%- contentFor('FooterJs') %>
-                <!-- Sweet Alerts js -->
-                <script src="public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
 
-                <!-- Sweet alert init js-->
-                <script src="public/assets/js/pages/sweet-alerts.init.js"></script>
-                <%- contentFor('BottomJs') %>
+
+<%- contentFor('FooterJs') %>
+<!-- Sweet Alerts js -->
+<script src="public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+
+<!-- Sweet alert init js-->
+<script src="public/assets/js/pages/sweet-alerts.init.js"></script>
+<%- contentFor('BottomJs') %>

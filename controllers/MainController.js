@@ -2,8 +2,10 @@
 const { postMessages, getMessages, getUser, clearChat, getOnesTypedUser, getOnesUserTyped, getMessageById,
         updateAccountName, updateProfilePhoto, getAllUsers, createGroup, getMessagesUserRelated,
         getAllGroups, getGroupById, getGroupMessages, postGroupMessages, updateGroupUsers, deleteGroup,
-        updateGroupPhoto, deleteUser, getGroupMember } 
-     = require('../model/crud');
+        updateGroupPhoto, deleteUser, getGroupMember, deleteMessage, editMessage, delGroupMess, editGroupMess,
+        getGroupMessById
+
+} = require('../model/crud');
 
     // delete user
 const delete_user = async(req, res)=>{
@@ -56,6 +58,46 @@ const get_messages = async (req, res) => {
     } catch (error) {
         console.log(error);
     }
+}
+
+const delete_message = async (req, res) => {
+    try {
+
+        let id = parseInt(req.query.id);
+        let result = await deleteMessage(id);
+        res.json({result:result});
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const get_edit_message = async (req, res) => {
+    try {
+
+        let id = parseInt(req.query.id);
+        let mess = await getMessageById(id);
+
+        res.json({result:mess[0]});
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const edit_message = async (req, res) =>{
+
+    try {
+
+        let id = parseInt(req.query.id);
+        let mess = req.body.mess;
+        let resu = await editMessage(id, mess);
+        res.json({result: resu});
+        
+    } catch (error) {
+        console.log(error);
+    }
+
 }
 
 const get_contacts = async (req, res) => {
@@ -519,6 +561,15 @@ const get_group_messages = async (req, res)=>{
         // console.log('result = '+result);
         if(!result || result.length === 0)
             return res.json({result:false});
+
+        result = result.map((user) => {
+            if(user["user_status"] === 0){
+                user.account_name = 'Deleted Account';
+                user.profile_photo = 'yellow.jpg';
+            }
+            return user;
+        });
+
         res.json({result:result, user_id:req.session.user.user_id});
         
     } catch (error) {
@@ -723,6 +774,42 @@ const update_group_photo = async (req, res)=>{
     }
 }
 
+const delete_group_mess = async (req, res) => {
+    let id = parseInt(req.query.id);
+    let resul = await delGroupMess(id);
+    res.json({result:resul});
+}
+
+const edit_group_mess = async (req, res) => {
+    try {
+
+        let id = parseInt(req.query.id);
+        let mess = req.body.mess;
+        let resul = await editGroupMess(id, mess);
+
+        res.json({result: resul});
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const get_group_edit_mess = async (req, res) => {
+
+    try {
+
+        let id = parseInt(req.query.id);
+        let resul = await getGroupMessById(id);
+        // console.log(id);
+        // console.log(resul);
+
+        res.json({result: resul[0]});
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
     get_main_page, post_messages,
     get_messages, get_contacts,
@@ -736,5 +823,9 @@ module.exports = {
     leave_group, delete_group,
     show_member_profile, get_users_to_add,
     add_users_to_group, get_group_members_info,
-    update_group_photo, delete_user
+    update_group_photo, delete_user,
+    delete_message, get_edit_message,
+    edit_message, delete_group_mess,
+    edit_group_mess, get_group_edit_mess
+
 }   
